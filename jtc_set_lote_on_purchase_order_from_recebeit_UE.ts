@@ -11,6 +11,7 @@ import * as record from 'N/record'
 
 export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.UserEvent.afterSubmitContext) => {
     try {
+        log.debug('type', ctx.type)
         if (ctx.type == ctx.UserEventType.CREATE || ctx.type == ctx.UserEventType.EDIT) {
             const curr = record.load({
                 type: record.Type.ITEM_RECEIPT,
