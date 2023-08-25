@@ -43,5 +43,10 @@ export const constant = {
                 EXPIRATION_DATE: 'expirationdate'
             },
         }
+    },
+
+    SALES_ORDER: {
+        LANCADOR_PEDIDO: 'custbody_jtc_lanc_ped'
     }
+
 }
