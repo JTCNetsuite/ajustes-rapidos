@@ -19,8 +19,6 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
             curr.setValue({fieldId:CTS.SALES_ORDER.LANCADOR_PEDIDO, value: currUser})    
         }
         
-
-
     } catch (error) {
         log.error("jtc_set_user_on_sales_order_UE.beforeSubmit", error)
     }

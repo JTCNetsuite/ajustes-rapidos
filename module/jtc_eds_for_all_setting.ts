@@ -46,7 +46,28 @@ export const constant = {
     },
 
     SALES_ORDER: {
-        LANCADOR_PEDIDO: 'custbody_jtc_lanc_ped'
+        LANCADOR_PEDIDO: 'custbody_jtc_lanc_ped',
+        SUBSIDIARY: 'subsidiary',
+        SUBLIST_ITEM: {
+            ID: 'item',
+            FIELDS:{
+                ITEM: 'item',
+                QTDE: 'quantity'
+            }
+        }
+    },
+    INVENTORY_NUMBER: {
+        INV_ITEM: 'inventorynumber.item',
+        LOCATION: "location",
+        NUMBER_SERIAL: 'inventorynumber'
+    },
+
+    INVENTORY_DETAIL: {
+        ID: 'inventorydetail',
+        ID_SUB: 'inventoryassignment',
+        QUANTITY: 'quantity',
+        SERIAL_LOTE: 'issueinventorynumber'
+
     }
 
 }
