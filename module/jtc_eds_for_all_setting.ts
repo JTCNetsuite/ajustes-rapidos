@@ -10,7 +10,12 @@ export const constant = {
         INVOICE_PEDDING_APPROVAL: 'customsearch273'
     },
     INVOICE: {
-        STATUS: 'approvalstatus'
+        STATUS: 'approvalstatus',
+        SUBLIST_INSTALLMENT: {
+            ID: 'installment',
+            ID_INSTALLMENT: 'id',
+            VALOR: 'amount'
+        }
     },
     PURCHASE_ORDER: {
         SUBSIDIARY: 'subsidiary',
