@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var hoje = new Date();
+
+        // Define a hora para 00:00:00 (meia-noite)
+        var inicioDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0);
+
+        // Define a hora para 23:59:59
+        var finalDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23, 59, 59);
+        console.log(inicioDoDia)
+        console.log(finalDoDia)
+    </script>
+</body>
+</html>

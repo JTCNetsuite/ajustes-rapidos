@@ -358,7 +358,7 @@ define(['N/record', 'N/search', 'N/log'],
                 console.log('linha  356 - function conversorData - O erro para formatar data é: ', error.message)
                 }
 
-            } //* Fim da function conversorData
+        } //* Fim da function conversorData
 
         function configurarTelefone(phone) {
 
@@ -372,9 +372,9 @@ define(['N/record', 'N/search', 'N/log'],
 
                 return telefone
 
-            } //*Fim da function configurarTelefone
+        } //*Fim da function configurarTelefone
 
-            function createNossoNumero(convenioBB) {
+        function createNossoNumero(convenioBB) {
 
                 var numeroConvenio = convenioBB
                 var converteConvenio = numeroConvenio.toString()
@@ -390,78 +390,78 @@ define(['N/record', 'N/search', 'N/log'],
                 // alert(' noss número:  ' + nossoNumero + ' --> numéro do convênio: ' + converteConvenio + ' --> número do do documento: ' + numeroTítulo)
 
                 return nossoNumero
-            } //*Fim da function createNossoNumero
+        } //*Fim da function createNossoNumero
 
-            function createTitulo() {
+        function createTitulo() {
 
-                const numeroTitulo = record.create({
-                    type: 'customrecord_jtc_api_cobranca_bb',
-                    isDynamic: true
-                })
-                numeroTitulo.save()
+            const numeroTitulo = record.create({
+                type: 'customrecord_jtc_api_cobranca_bb',
+                isDynamic: true
+            })
+            numeroTitulo.save()
 
-                const customNossoNumero = customizandoNossoNumero()
-                const id = customNossoNumero.nossoNumero
-                const nossoNumeroString = customNossoNumero.stringNossoNumero
+            const customNossoNumero = customizandoNossoNumero()
+            const id = customNossoNumero.nossoNumero
+            const nossoNumeroString = customNossoNumero.stringNossoNumero
 
-                var numeroTituloObj = record.load({
-                    type: 'customrecord_jtc_api_cobranca_bb',
-                    id: id,
-                    isDynamic: true,
-                });
-                numeroTituloObj.setValue({ fieldId: 'custrecord_jtc_api_bb_nosso_numero', value: nossoNumeroString });
-                numeroTituloObj.save()
-                console.log('Linha 412 - Numero do Título:  ', nossoNumeroString, ' ---> id do nosso número:  ', id)
+            var numeroTituloObj = record.load({
+                type: 'customrecord_jtc_api_cobranca_bb',
+                id: id,
+                isDynamic: true,
+            });
+            numeroTituloObj.setValue({ fieldId: 'custrecord_jtc_api_bb_nosso_numero', value: nossoNumeroString });
+            numeroTituloObj.save()
+            console.log('Linha 412 - Numero do Título:  ', nossoNumeroString, ' ---> id do nosso número:  ', id)
 
-                return nossoNumeroString
-            } //*Fim da function createTitulo
+            return nossoNumeroString
+        } //*Fim da function createTitulo
 
-            function customizandoNossoNumero() {
+        function customizandoNossoNumero() {
 
-                var nossoNumero
+            var nossoNumero
 
-                var customrecord_jtc_api_cobranca_bbSearchObj = search.create({
-                    type: "customrecord_jtc_api_cobranca_bb",
-                    filters:
-                        [
-                        ],
-                    columns:
-                        [
-                            search.createColumn({
-                                name: "id",
-                                sort: search.Sort.ASC,
-                                label: "ID"
-                            })
-                        ]
-                });
+            var customrecord_jtc_api_cobranca_bbSearchObj = search.create({
+                type: "customrecord_jtc_api_cobranca_bb",
+                filters:
+                    [
+                    ],
+                columns:
+                    [
+                        search.createColumn({
+                            name: "id",
+                            sort: search.Sort.ASC,
+                            label: "ID"
+                        })
+                    ]
+            });
 
-                customrecord_jtc_api_cobranca_bbSearchObj.run().each(function (result) {
-                    // .run().each has a limit of 4,000 results
-                    nossoNumero = result.getValue({
-                        name: "id",
-                        sort: search.Sort.ASC,
-                        label: "ID"
-                    })
-
-                    return true;
+            customrecord_jtc_api_cobranca_bbSearchObj.run().each(function (result) {
+                // .run().each has a limit of 4,000 results
+                nossoNumero = result.getValue({
+                    name: "id",
+                    sort: search.Sort.ASC,
+                    label: "ID"
                 })
 
-                var stringNossoNumero = nossoNumero.toString()
+                return true;
+            })
 
-                for (var i = stringNossoNumero.length; i < 10; i++) {
+            var stringNossoNumero = nossoNumero.toString()
 
-                    stringNossoNumero = '0' + stringNossoNumero
-                }
+            for (var i = stringNossoNumero.length; i < 10; i++) {
 
-                console.log('Linha 454 --> apresentado nosso numero: ', nossoNumero, ' --> número do documento com 10 caracteres: ', stringNossoNumero)
+                stringNossoNumero = '0' + stringNossoNumero
+            }
 
-                const customDoc = {
-                    "nossoNumero": nossoNumero,
-                    "stringNossoNumero": stringNossoNumero
-                }
+            console.log('Linha 454 --> apresentado nosso numero: ', nossoNumero, ' --> número do documento com 10 caracteres: ', stringNossoNumero)
 
-                return customDoc
-            } //*Fim da function customizandoNossoNumero
+            const customDoc = {
+                "nossoNumero": nossoNumero,
+                "stringNossoNumero": stringNossoNumero
+            }
+
+            return customDoc
+        } //*Fim da function customizandoNossoNumero
 
             return {
                 pageInit: pageInit,
