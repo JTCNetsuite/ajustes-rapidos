@@ -419,11 +419,12 @@ define(['N/record', 'N/search', 'N/log'],
         function customizandoNossoNumero() {
 
             var nossoNumero
-
+            var limite = 0
             var customrecord_jtc_api_cobranca_bbSearchObj = search.create({
                 type: "customrecord_jtc_api_cobranca_bb",
                 filters:
                     [
+                        ["created","after","12/09/2023 0:00","12/09/2023 23:59"]
                     ],
                 columns:
                     [
@@ -436,13 +437,14 @@ define(['N/record', 'N/search', 'N/log'],
             });
 
             customrecord_jtc_api_cobranca_bbSearchObj.run().each(function (result) {
+                limite += 1
                 // .run().each has a limit of 4,000 results
                 nossoNumero = result.getValue({
                     name: "id",
                     sort: search.Sort.ASC,
                     label: "ID"
                 })
-
+                
                 return true;
             })
 

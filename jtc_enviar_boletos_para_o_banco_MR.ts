@@ -21,7 +21,7 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
     return search.create({
         type: 'customrecord_dk_cnab_aux_parcela',
         filters: [
-            ["created","within","13/09/2023 0:00","13/09/2023 23:59"], 
+            ["created","within", "14/09/2023 0:00","14/09/2023 23:59"], 
             "AND", 
             ["custrecord_cnab_env_para_banco","is","F"]
          ],
@@ -44,15 +44,3 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
 
 }
 
-
-const padTo2Digits = (num) => {
-    return num.toString().padStart(2, '0');
-}
-
-const formatDate = (date) =>  {
-    return [
-      padTo2Digits(date.getDate()),
-      padTo2Digits(date.getMonth() + 1),
-      date.getFullYear(),
-    ].join('/');
-  }
