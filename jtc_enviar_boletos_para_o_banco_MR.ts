@@ -21,7 +21,7 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
     return search.create({
         type: 'customrecord_dk_cnab_aux_parcela',
         filters: [
-            ["created","within", "14/09/2023 0:00","14/09/2023 23:59"], 
+            ["created","within", "15/09/2023 0:00","15/09/2023 23:59"], 
             "AND", 
             ["custrecord_cnab_env_para_banco","is","F"]
          ],
