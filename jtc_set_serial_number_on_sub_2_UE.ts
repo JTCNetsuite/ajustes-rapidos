@@ -35,53 +35,105 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                             line: i
                         })
         
-                        const item = String(recSalesOrd.getCurrentSublistText({
+                        const item = String(recSalesOrd.getCurrentSublistValue({
                             fieldId: CTS.SALES_ORDER.SUBLIST_ITEM.FIELDS.ITEM,
                             sublistId: sublist 
-                        })).split(" ")
+                        }))
     
                         log.debug("item", item)
     
-                        const qtde = recSalesOrd.getCurrentSublistValue({
+                        const qtde = Number(recSalesOrd.getCurrentSublistValue({
                             fieldId: CTS.SALES_ORDER.SUBLIST_ITEM.FIELDS.QTDE,
                             sublistId: sublist 
-                        })
+                        }))
     
                         const searchLoteNum = search.create({
-                            type: search.Type.INVENTORY_NUMBER,
+                            type: "inventorynumberitem",
                             filters: [
-                                ['item.name', search.Operator.HASKEYWORDS, item[0]],
+                                ['inventorynumber.item', search.Operator.ANYOF, item],
                                 "AND",
-                                [CTS.INVENTORY_NUMBER.LOCATION, search.Operator.ANYOF, 2]
+                                [CTS.INVENTORY_NUMBER.LOCATION, search.Operator.ANYOF, 2],
+                                "AND",
+                                ["quantityavailable", search.Operator.GREATERTHAN, 0],
+                                "AND",
+                                [CTS.INVENTORY_NUMBER.NUMBER_SERIAL, search.Operator.ISNOT, "JR"]
                             ],
                             columns: [
-                                search.createColumn({name: CTS.INVENTORY_NUMBER.NUMBER_SERIAL})
+                                search.createColumn({name: CTS.INVENTORY_NUMBER.NUMBER_SERIAL}),
+                                search.createColumn({name: "quantityonhand", label: "Em estoque"}),
+                                search.createColumn({name: "quantityavailable", label: "Disponível"})
                             ]
-                        }).run().getRange({start:0, end:1})
+                        }).run().getRange({start:0, end:10})
                         
                         log.debug("searchLoteNum", searchLoteNum)
                         
+                        const lotes = []
+
+                        let sum = 0
+                        for (var k=0; k < searchLoteNum.length; k++) {
+                            if (sum <= qtde) {
+                                lotes.push({
+                                    id: searchLoteNum[k].id,
+                                    num: searchLoteNum[k].getValue({name: CTS.INVENTORY_NUMBER.NUMBER_SERIAL}),
+                                    quantidade: searchLoteNum[k].getValue({name: 'quantityavailable'})
+                                })
+
+                                sum += Number(searchLoteNum[k].getValue({name: 'quantityavailable'}))
+                            
+                            }
+                        }
+                        log.debug("lotes", lotes)
+
                         const inventorydetail = recSalesOrd.getCurrentSublistSubrecord({
                             sublistId: sublist,
                             fieldId: CTS.INVENTORY_DETAIL.ID
                         })
-    
-                        inventorydetail.selectNewLine({
-                            sublistId: CTS.INVENTORY_DETAIL.ID_SUB
-                        })
-    
-                        inventorydetail.setCurrentSublistValue({
-                            sublistId: CTS.INVENTORY_DETAIL.ID_SUB,
-                            fieldId: CTS.INVENTORY_DETAIL.SERIAL_LOTE,
-                            value: searchLoteNum[0].id
-                        })
-    
-                        inventorydetail.setCurrentSublistValue({
-                            sublistId: CTS.INVENTORY_DETAIL.ID_SUB,
-                            fieldId: CTS.INVENTORY_DETAIL.QUANTITY,
-                            value: qtde
-                        })
-                        inventorydetail.commitLine({sublistId: CTS.INVENTORY_DETAIL.ID_SUB})
+                        // for (var line = 0; line < lotes.length; line ++) {
+                        //     log.debug("lores", lotes[line].values)
+
+                        // }
+                        let restante = qtde
+                        for (var lote = 0; lote < lotes.length; lote++) {
+                            const value = lotes[lote]
+                            log.debug("value id", value.id)
+                            log.debug('restante', restante)
+                            inventorydetail.selectNewLine({
+                                sublistId: CTS.INVENTORY_DETAIL.ID_SUB
+                            })
+        
+                            inventorydetail.setCurrentSublistValue({
+                                sublistId: CTS.INVENTORY_DETAIL.ID_SUB,
+                                fieldId: CTS.INVENTORY_DETAIL.SERIAL_LOTE,
+                                value: value.id
+                            })
+        
+                           
+                            if (value.quantidade < qtde) {
+                                log.debug("menor", value.quantidade)
+                                restante -= value.quantidade
+                                
+                                inventorydetail.setCurrentSublistValue({
+                                    sublistId: CTS.INVENTORY_DETAIL.ID_SUB,
+                                    fieldId: CTS.INVENTORY_DETAIL.QUANTITY,
+                                    value: value.quantidade
+                                })
+
+                            } else{
+                                value.quantidade = restante
+
+                                inventorydetail.setCurrentSublistValue({
+                                    sublistId: CTS.INVENTORY_DETAIL.ID_SUB,
+                                    fieldId: CTS.INVENTORY_DETAIL.QUANTITY,
+                                    value: value.quantidade
+                                })
+
+
+                            }
+                            log.debug("quanteide", value.quantidade)
+                            inventorydetail.commitLine({sublistId: CTS.INVENTORY_DETAIL.ID_SUB})
+
+                        }
+                       
     
     
                         recSalesOrd.commitLine({sublistId: sublist})
