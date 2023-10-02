@@ -56,12 +56,19 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                                 "AND",
                                 ["quantityavailable", search.Operator.GREATERTHAN, 0],
                                 "AND",
-                                [CTS.INVENTORY_NUMBER.NUMBER_SERIAL, search.Operator.ISNOT, "JR"]
+                                [CTS.INVENTORY_NUMBER.NUMBER_SERIAL, search.Operator.ISNOT, "JR"],
+                                "AND", 
+                                ["expirationdate","after","29/09/2023"]
                             ],
                             columns: [
                                 search.createColumn({name: CTS.INVENTORY_NUMBER.NUMBER_SERIAL}),
                                 search.createColumn({name: "quantityonhand", label: "Em estoque"}),
-                                search.createColumn({name: "quantityavailable", label: "Disponível"})
+                                search.createColumn({name: "quantityavailable", label: "Disponível"}),
+                                search.createColumn({
+                                    name: "expirationdate",
+                                    sort: search.Sort.ASC,
+                                    label: "Data de validade"
+                                 })
                             ]
                         }).run().getRange({start:0, end:10})
                         
