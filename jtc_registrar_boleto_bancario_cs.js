@@ -424,7 +424,7 @@ define(['N/record', 'N/search', 'N/log'],
                 type: "customrecord_jtc_api_cobranca_bb",
                 filters:
                     [
-                        ["created","after","22/09/2023 0:00","22/09/2023 23:59"]
+                        ["created","after","09/10/2023 0:00","09/10/2023 23:59"]
                     ],
                 columns:
                     [
