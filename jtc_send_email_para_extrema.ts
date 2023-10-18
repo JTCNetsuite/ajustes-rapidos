@@ -148,7 +148,7 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
             log.debug("recepientes",recipients)
             try {
                 email.send({
-                    author: -5,
+                    author: 7134,
                     body: `Prezado cliente! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
                     subject: String(pedido_vendas),
                     recipients: recipients,

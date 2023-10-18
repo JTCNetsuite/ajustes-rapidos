@@ -56,7 +56,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
             if (status == "B") {
                 try {
                     email.send({
-                        author: -5,
+                        author: 7134,
                         body: `Prezado cliente! <br></br>Informamos que o seu pedido da JTC Distribuidora foi SEPARADO`,
                         subject: String(pedido_vendas),
                         recipients: recipients
@@ -87,3 +87,4 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
         log.error("jtc_send_email_na_separcao_UE.afterSubmit", error)
     }
 }
+
