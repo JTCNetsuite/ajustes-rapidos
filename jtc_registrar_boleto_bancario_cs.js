@@ -398,22 +398,25 @@ define(['N/record', 'N/search', 'N/log'],
                 type: 'customrecord_jtc_api_cobranca_bb',
                 isDynamic: true
             })
-            numeroTitulo.save()
+            const id_nssnum = numeroTitulo.save()
+            var stringNossoNumero = id_nssnum.toString()
 
-            const customNossoNumero = customizandoNossoNumero()
-            const id = customNossoNumero.nossoNumero
-            const nossoNumeroString = customNossoNumero.stringNossoNumero
+            for (var i = stringNossoNumero.length; i < 10; i++) {
+
+                stringNossoNumero = '0' + stringNossoNumero
+            }
+          
 
             var numeroTituloObj = record.load({
                 type: 'customrecord_jtc_api_cobranca_bb',
-                id: id,
+                id: id_nssnum,
                 isDynamic: true,
             });
-            numeroTituloObj.setValue({ fieldId: 'custrecord_jtc_api_bb_nosso_numero', value: nossoNumeroString });
+            numeroTituloObj.setValue({ fieldId: 'custrecord_jtc_api_bb_nosso_numero', value: stringNossoNumero });
             numeroTituloObj.save()
-            console.log('Linha 412 - Numero do Título:  ', nossoNumeroString, ' ---> id do nosso número:  ', id)
+            console.log('Linha 412 - Numero do Título:  ', stringNossoNumero, ' ---> id do nosso número:  ', id_nssnum)
 
-            return nossoNumeroString
+            return stringNossoNumero
         } //*Fim da function createTitulo
 
         function customizandoNossoNumero() {
@@ -424,29 +427,30 @@ define(['N/record', 'N/search', 'N/log'],
                 type: "customrecord_jtc_api_cobranca_bb",
                 filters:
                     [
-                        ["created","after","09/10/2023 0:00","09/10/2023 23:59"]
+                        // ["created","after","21/10/2023 0:00","21/10/2023 23:59"]
                     ],
                 columns:
                     [
                         search.createColumn({
                             name: "id",
-                            sort: search.Sort.ASC,
+                            sort: search.Sort.DESC,
                             label: "ID"
                         })
                     ]
-            });
+            }).run().getRange({start: 0, end: 1});
+            nossoNumero = customrecord_jtc_api_cobranca_bbSearchObj[0].getValue({name:"id"})
 
-            customrecord_jtc_api_cobranca_bbSearchObj.run().each(function (result) {
-                limite += 1
-                // .run().each has a limit of 4,000 results
-                nossoNumero = result.getValue({
-                    name: "id",
-                    sort: search.Sort.ASC,
-                    label: "ID"
-                })
+            // customrecord_jtc_api_cobranca_bbSearchObj.run().each(function (result) {
+            //     limite += 1
+            //     // .run().each has a limit of 4,000 results
+            //     nossoNumero = result.getValue({
+            //         name: "id",
+            //         sort: search.Sort.ASC,
+            //         label: "ID"
+            //     })
                 
-                return true;
-            })
+            //     return true;
+            // })
 
             var stringNossoNumero = nossoNumero.toString()
 
