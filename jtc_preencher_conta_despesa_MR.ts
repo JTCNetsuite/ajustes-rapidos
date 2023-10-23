@@ -17,6 +17,8 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
             type: "vendorpayment",
             filters:
             [
+                ["internalid", search.Operator.ANYOF, 91379],
+                "AND",
                ["type","anyof","VendPymt"], 
                "AND", 
                ["mainline","is","T"]
@@ -41,7 +43,7 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
 export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
     try {
         const values = JSON.parse(ctx.value)
-        // log.debug("values", values)
+        log.debug("values", values)
 
         const id = values.id
 
@@ -55,7 +57,7 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
             fieldId: 'doc',
             line: 0
         })
-
+        log.debug("idVerdnor", idVendorBill)
         if (!!idVendorBill) {
             var vendorbillSearchObj = search.create({
                 type: "vendorbill",
@@ -74,20 +76,20 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
                    search.createColumn({name: "account", label: "Conta"})
                 ]
              }).run().getRange({start: 0, end: 1});
-
-             if (vendorbillSearchObj.length > 0) {
-                const conta = vendorbillSearchObj[0].getValue({name:  "account"})
+             log.debug("vendorbillSearchObj", vendorbillSearchObj)
+            //  if (vendorbillSearchObj.length > 0) {
+                // const conta = vendorbillSearchObj[0].getValue({name:  "account"})
 
                 log.debug("vendorbillSearchObj", vendorbillSearchObj[0])
 
                 
-                recVendPayment.setValue({fieldId: 'custbody_jtc_conta_de_despesa', value: conta})
+                recVendPayment.setValue({fieldId: 'custbody_jtc_conta_de_despesa', value: 345})
 
                 const idReturn = recVendPayment.save({ignoreMandatoryFields: true})
 
                 log.audit("id returen", idReturn)
                 
-             }
+            //  }
         }
 
     } catch (error) {
