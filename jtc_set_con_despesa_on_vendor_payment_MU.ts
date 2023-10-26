@@ -27,9 +27,6 @@ export const each: EntryPoints.MassUpdate.each = (ctx: EntryPoints.MassUpdate.ea
         const idReturn = recVwndPayment.save({ignoreMandatoryFields: true})
 
         log.audit("idRetturn", idReturn)
-        
-
-       
 
 
     } catch (error) {
