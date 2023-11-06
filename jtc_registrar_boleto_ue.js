@@ -18,16 +18,16 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
 
         function afterSubmit(context) {
 
-            //   if (context.type == context.UserEventType.CREATE) {
+              if (context.type == context.UserEventType.CREATE || context.type == context.UserEventType.EDIT) {
 
-            const nRecord = context.newRecord
-            const id = nRecord.id
-          const enviar = nRecord.getValue("e")
-          if (enviar == "T" || enviar == true) {
-            accessToken(id)
-          }
+                const nRecord = context.newRecord
+                const id = nRecord.id
+                const enviar = nRecord.getValue("e")
+                if (enviar == "T" || enviar == true) {
+                    accessToken(id)
+                }
             
-            //  }
+             }
         }
 
         function accessToken(idRec) {
@@ -308,7 +308,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 const bodyJSON = JSON.parse(body)
                 const erros = bodyJSON.erros
                 const mensagem = 'Atenção boleto não gerado.   Código do erro: ' + code + '. Motivo: ' + erros[0].mensagem + '.'
-                const emails = 'denis@jtcd.com.br, cobranca@jtcd.com.br'
+                const emails = 'cobranca@jtcd.com.br'
                 const subject = 'CÓDIGO: ' + code + '   ->  REQUISIÇÃO INVÁLIDA: boleto já criado ou dados incorretos.'
 
                 log.debug({
@@ -680,7 +680,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
 
             const nossoNumero = getNossoNumero(id)
             const senderId = -5
-            const emails = 'denis@jtcd.com.br'
+            // const emails = 'denis@jtcd.com.br'
             const arrAttachSlip = getAttachSlip(nossoNumero)
             const bankSlipData = getBankSlipData(id)
 
@@ -717,13 +717,13 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                     id: idArquivo
                 })
 
-                email.send({
-                    author: senderId,
-                    recipients: emails,
-                    subject: subject,
-                    body: mensagem,
-                    attachments: [attachSlip]
-                })
+                // email.send({
+                //     author: senderId,
+                //     recipients: emails,
+                //     subject: subject,
+                //     body: mensagem,
+                //     attachments: [attachSlip]
+                // })
                 // try {
                 //     email.send({
                 //         author: senderId,
