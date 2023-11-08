@@ -80,7 +80,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                                 body: body,
                                 subject: `NF ${nf}`,
                                 recipients: [email_trans],
-                                cc: ['denis@jtcd.com.br'],
+                                // cc: ['denis@jtcd.com.br'],
                                 attachments: [fileXml]
                             })
         
