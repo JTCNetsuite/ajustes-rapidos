@@ -4,18 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
+    <barcode codetype="ITF-14" showtext="001900000"/>
+
+    <svg id="barcode"></svg>
+    <!-- <svg id="barcode2"></svg> -->
+    <!-- <svg id="barcode3"></svg> -->
+    <!-- <svg id="barcode4"></svg> -->
+    <!-- <svg id="barcode5"></svg> -->
+    <!-- <svg id="barcode6"></svg> -->
+
+    
+
     <script>
-        var hoje = new Date();
-
-        // Define a hora para 00:00:00 (meia-noite)
-        var inicioDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0, 0, 0);
-
-        // Define a hora para 23:59:59
-        var finalDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23, 59, 59);
-        console.log(inicioDoDia)
-        console.log(finalDoDia)
+      JsBarcode("#barcode", "001900000", {
+            format: "ITF-14",
+            width: 4,
+            height: 20,
+            displayValue: true
+        });
+        // JsBarcode("#barcode2", "90220286", {
+        //     format: "itf-14",
+        //     width: 4,
+        //     height: 20,
+        //     displayValue: true
+        // });
+        // JsBarcode("#barcode3", "40010001", {
+        //     format: "itf-14",
+        //     width: 4,
+        //     height: 10,
+        //     displayValue: true
+        // });
+        // JsBarcode("#barcode4", "80271771", {
+        //     format: "itf-14",
+        //     width: 4,
+        //     height: 10,
+        //     displayValue: true
+        // });
+        // JsBarcode("#barcode5", "95840000", {
+        //     format: "itf-14",
+        //     width: 4,
+        //     height: 10,
+        //     displayValue: true
+        // });
+        // JsBarcode("#barcode6", "168750", {
+        //     format: "itf-14",
+        //     width: 4,
+        //     height: 10,
+        //     displayValue: true
+        // });
     </script>
 </body>
 </html>
