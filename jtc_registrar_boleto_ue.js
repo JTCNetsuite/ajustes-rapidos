@@ -625,7 +625,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 bankSlip += "<script>"
                 bankSlip += "JsBarcode(\"#barcode\",'" + digitableLine.toString() + "', {"
                 bankSlip += "format: \"CODE128\" ,"
-                bankSlip += "displayValue: false,"
+                bankSlip += "displayValue: true,"
                 bankSlip += "width: 1.48,"
                 bankSlip += "height: 40,"
                 bankSlip += "fontSize: 15,"
