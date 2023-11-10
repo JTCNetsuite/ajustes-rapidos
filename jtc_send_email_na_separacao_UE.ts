@@ -16,6 +16,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
         
         const curr = ctx.newRecord
         const idSalesOrd = curr.getValue("createdfrom")
+        const nome_cliente = curr.getText("entity")
 
         log.debug("type", curr.type)
         const status = curr.getValue("shipstatus")
@@ -57,7 +58,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                 try {
                     email.send({
                         author: 7134,
-                        body: `Prezado cliente! <br></br>Informamos que o seu pedido da JTC Distribuidora foi SEPARADO`,
+                        body: `Olá ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi SEPARADO, e já está pronto para expedição. Para mais informações, por favor entre em contato com nosso setor de vendas.`,
                         subject: String(pedido_vendas),
                         recipients: recipients
                     })

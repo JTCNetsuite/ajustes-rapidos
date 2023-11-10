@@ -8,6 +8,7 @@
 import { EntryPoints } from 'N/types'
 import * as log from 'N/log'
 import * as search from 'N/search'
+import { LayoutJustification } from '@hitc/netsuite-types/N/ui/serverWidget'
 
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
@@ -28,15 +29,33 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
             }).custentity_jtc_disccount
 
             if (!!getDiscount) {
-                curr.setValue({fieldId: 'discountitem', value: -6})
+                // curr.setValue({fieldId: 'discountitem', value: -6})
                 const percent = Number(String(getDiscount).split("%")[0]) / 100
                 log.debug("percernt", percent)
 
-                const discount = vTotal * percent
+                // const discount = vTotal * percent
 
-                log.debug("discount", discount)
+                // log.debug("discount", discount)
 
-                curr.setValue({fieldId: 'discountrate', value: -discount.toFixed(2)})
+                const line = curr.getLineCount({sublistId: 'item'})
+
+
+                for (var i = 0; i < line; i++) {
+
+                    const amount = Number(curr.getSublistValue({
+                        fieldId: 'amount',
+                        sublistId: 'item',
+                        line: i
+                    }))
+                    
+                    
+                    curr.setSublistValue({
+                        fieldId: 'custcol_enl_discamount',
+                        sublistId: 'item',
+                        line: i,
+                        value: Math.floor(amount * percent)
+                    })
+                }
 
 
 

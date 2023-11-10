@@ -110,6 +110,7 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
     try {
         const curr = ctx.newRecord
         const idSalesOrd = curr.getValue("createdfrom")
+        const nome_cliente = curr.getText("entity")
 
         log.debug("type", curr.type)
         const status = curr.getValue("shipstatus")
@@ -149,7 +150,7 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
             try {
                 email.send({
                     author: 7134,
-                    body: `Prezado cliente! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
+                    body: `Olá, ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO. Seguem a Nota Fiscal em PDF e o XML anexos. Para demais informações, entre em contato com nosso setor de vendas. <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
                     subject: String(pedido_vendas),
                     recipients: recipients,
                     attachments: [fileXml]
