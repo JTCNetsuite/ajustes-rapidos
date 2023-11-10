@@ -11,22 +11,32 @@ import {lookupFields, Type} from 'N/search'
 
 export const each: EntryPoints.MassUpdate.each = (ctx: EntryPoints.MassUpdate.eachContext) => {
     try {
-        const recVwndPayment = record.load({
+        const vendorBill = record.load({
             id: ctx.id,
-            type: record.Type.VENDOR_PAYMENT
+            type: record.Type.VENDOR_BILL
         })
 
-        const refNum = recVwndPayment.getSublistValue({
-            fieldId: 'refnum',
-            sublistId: 'apply',
+        const item = vendorBill.getSublistValue({
+            fieldId: 'item',
+            sublistId: 'item',
             line: 0
         })
 
-        recVwndPayment.setValue({fieldId: 'custbody_jtc_num_referencia', value: refNum})
-        
-        const idReturn = recVwndPayment.save({ignoreMandatoryFields: true})
+        const contDespesa = lookupFields({
+            id: item,
+            type: Type.SERVICE_ITEM,
+            columns: [
+                'expenseaccount'
+            ]
+        }).expenseaccount
 
-        log.audit("idRetturn", idReturn)
+        log.debug("conta despesa", contDespesa)
+
+
+        
+        // const idReturn = vendorBill.save({ignoreMandatoryFields: true})
+
+        // log.audit("idRetturn", idReturn)
 
 
     } catch (error) {
