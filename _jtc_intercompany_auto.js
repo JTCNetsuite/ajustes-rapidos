@@ -80,7 +80,12 @@ function (record, log, search, format) {
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'account', value: contaBanco}); // Conta Contabil
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'debit', value: valorPago});
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'memo', value:memoPagamento}); // Memo
-                        journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:entity}); 
+                        try {
+                            
+                            journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:entity}); 
+                        } catch (err) {
+                            log.debug("set Entity", err)
+                        }
                         journalInter.commitLine({sublistId: 'line'}); 
 
                         // ********* Criação da linha 1 *********
@@ -88,7 +93,11 @@ function (record, log, search, format) {
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'account', value: contaIntercompany}); // Conta Contabil
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'credit', value: valorPago});
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'memo', value:memoPagamento}); // Memo
-                        journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:entity}); // Memo
+                        try {
+                            journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:entity}); 
+                        } catch (err) {
+                            log.debug("set Entity", err)
+                        }
                         journalInter.commitLine({sublistId: 'line'});
                     } else {
                         const payer = currentRecord.getValue("entity")
@@ -97,7 +106,12 @@ function (record, log, search, format) {
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'account', value: contaIntercompany }); // Conta Contabil
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'debit', value: valorPago});
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'memo', value:memoPagamento}); // Memo
-                        journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:payer});
+                        try {
+                            
+                            journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:payer}); 
+                        } catch (err) {
+                            log.debug("set Entity", err)
+                        }
                         journalInter.commitLine({sublistId: 'line'}); 
 
                         // ********* Criação da linha 1 *********
@@ -105,7 +119,13 @@ function (record, log, search, format) {
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'account', value: contaBanco}); // Conta Contabil
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'credit', value: valorPago});
                         journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'memo', value:memoPagamento}); // Memo
-                        journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:payer});
+
+                        try {
+                            journalInter.setCurrentSublistValue({sublistId: 'line', fieldId: 'entity', value:payer}); 
+                        } catch (err) {
+                            log.debug("set Entity", err)
+                        }
+                        
                         journalInter.commitLine({sublistId: 'line'});
                     }
                     
