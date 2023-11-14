@@ -41,19 +41,21 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
 
 
                 for (var i = 0; i < line; i++) {
+                    let aumento = 0
 
                     const amount = Number(curr.getSublistValue({
                         fieldId: 'amount',
                         sublistId: 'item',
                         line: i
                     }))
-                    
+
+                    let desconto = Math.floor(amount * percent)
                     
                     curr.setSublistValue({
                         fieldId: 'custcol_enl_discamount',
                         sublistId: 'item',
                         line: i,
-                        value: Math.floor(amount * percent)
+                        value: desconto
                     })
                 }
 
