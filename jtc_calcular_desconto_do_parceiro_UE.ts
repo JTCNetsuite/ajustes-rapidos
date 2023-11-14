@@ -8,7 +8,6 @@
 import { EntryPoints } from 'N/types'
 import * as log from 'N/log'
 import * as search from 'N/search'
-import { LayoutJustification } from '@hitc/netsuite-types/N/ui/serverWidget'
 
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
