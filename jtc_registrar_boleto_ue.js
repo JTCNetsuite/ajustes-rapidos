@@ -22,7 +22,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
 
                 const nRecord = context.newRecord
                 const id = nRecord.id
-                const enviar = nRecord.getValue("e")
+                const enviar = nRecord.getValue("custrecord_cnab_env_para_banco")
                 if (enviar == "T" || enviar == true) {
                     accessToken(id)
                 }
@@ -204,6 +204,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 "campoUtilizacaoBeneficiario": (recLoad.getValue('custrecord_dk_cnab_utilizar_beneficiario')).toUpperCase(), //Colocado em 09/05 o log
                 "numeroTituloCliente": recLoad.getValue('custrecord_dk_cnab_nosso_numero'),
                 "mensagemBloquetoOcorrencia": (recLoad.getValue('custrecord_dk_cnab_mensagem_bloqueto')).toUpperCase(),
+                // "email": 'netsuite@jtcd.com.br',
                 "desconto": {
                     "tipo": recLoad.getValue('custrecord_dk_cnab_desconto_tipo'),
                     "dataExpiracao": recLoad.getValue('custrecord_dk_cnab_desconto_expira'),
@@ -481,6 +482,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                     details: 'JTC - cnpj: ' + beneficiaryCnpjString + '  >> Pagador cnpj: ' + payerCnpjString + '  >> R$ ' + realBR
                 })
 
+                // const requestbarcode = https.post({})
 
                 var bankSlip = "<!DOCTYPE html>"
                 bankSlip += "<html>"
