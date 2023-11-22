@@ -168,6 +168,14 @@ const formPost = (form: UI.Form, ctx: EntryPoints.Suitelet.onRequestContext) => 
                     value: String(vl_parcela)
                 })
             }
+            if (!!values.getValue({name: 'amountpaid', join: 'installment'}) ) {
+                sublist.setSublistValue({
+                    id: 'custpage_vl_pago',
+                    line: i,
+                    value: String(values.getValue({name: 'amountpaid', join: 'installment'}))
+                })
+            }
+            
 
             const status = values.getValue({name: 'status', join: 'installment'})
             if (!!status) {
@@ -282,6 +290,11 @@ const createSublist = (form: UI.Form) => {
             type: UI.FieldType.CURRENCY
         })
         sublist.addField({
+            id: 'custpage_vl_pago',
+            label: 'Prestação Valor Pago',
+            type: UI.FieldType.CURRENCY
+        })
+        sublist.addField({
             id: 'custpage_status_parcela',
             label: 'STATUS PARCELA',
             type: UI.FieldType.TEXT
@@ -385,7 +398,12 @@ const searchTransactions = (ctx: EntryPoints.Suitelet.onRequestContext) => {
                   label: "Status Parcela"
                }),
                search.createColumn({name: "amount", label: "Valor Total"}),
-               search.createColumn({name: "appliedtotransaction", label: "Aplicados à transação"})
+               search.createColumn({name: "appliedtotransaction", label: "Aplicados à transação"}),
+               search.createColumn({
+                name: "amountpaid",
+                join: "installment",
+                label: "Valor pago"
+             })
             ]
          }).run().getRange({start: 0, end: 1000});
 
