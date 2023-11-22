@@ -620,10 +620,14 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 bankSlip += "<td style= \"border: 1px solid black; line-height: 250%; line-height: 0.2;\"  colspan=\"6\">"
                 bankSlip += "<label style=\"font-size: 9px;\">Código de Barras</label>"
                 bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold;\"> <br></p>"
-                bankSlip += "<barcode codetype=\"code128\" showtext=\"'" + digitableLine.toString() + "'\"/>" //*atenção ao barcode
+                // bankSlip += "<barcode codetype=\"code128\" showtext=\"'" + digitableLine.toString() + "'\"/>" //*atenção ao barcode
 
                 //* bankSlip += "<barcode codetype=\"code128\" showtext=\"false\" height=\"15px\" width=\"420px\" value=\"" + barsCode + "\"/>" //*atenção ao barcode
-                bankSlip += "<svg id=\"barcode\" ></svg>"
+                // bankSlip += "<svg id=\"barcode\" ></svg>"
+                const url = 'https://barcodes.pro/get/generator?f=svg&s=itf14&d='+barsCode+'&cm=url%28%23black%29&sf=0.9&sy=0.5&ts=10&th=10'
+                const requesp = https.get({url: url})
+                bankSlip += requesp.body
+                // log.audit("reqqu", requesp.body)
                 bankSlip += "<script>"
                 bankSlip += "JsBarcode(\"#barcode\",'" + digitableLine.toString() + "', {"
                 bankSlip += "format: \"CODE128\" ,"
@@ -635,12 +639,12 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 bankSlip += "})"
                 bankSlip += "</script >"
                 bankSlip += "</td></tr>"
-
+                
+                
                 bankSlip += "</table>"
                 bankSlip += "</div></body>"
                 bankSlip += "</html>"
-
-
+                
                 const bankSlipObj = file.create({
                     name: ourBankSlipNumber.toString() + '.html',
                     fileType: file.Type.HTMLDOC,
