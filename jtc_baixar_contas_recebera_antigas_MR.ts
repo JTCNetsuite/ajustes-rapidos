@@ -28,74 +28,82 @@ import * as record from 'N/record'
 // }
 
 
-// export const getInputData: EntryPoints.MapReduce.getInputData = () => {
-//     try {
-//         return search.create({
-//             type: "vendorbill",
-//             filters:
-//             [
-//                ["type","anyof","VendBill"], 
-//                "AND", 
-//                ["mainline","is","T"]
-//             ],
-//             columns:
-//             [
-//                search.createColumn({name: "trandate", label: "Data"}),
-//                search.createColumn({name: "tranid", label: "Número do documento"}),
-//                search.createColumn({name: "entity", label: "Nome"}),
-//                search.createColumn({name: "amount", label: "Valor"}),
-//                search.createColumn({name: "custbody_jtc_conta_de_despesa", label: "Conta de Despesa"})
-//             ]
-//          });
+export const getInputData: EntryPoints.MapReduce.getInputData = () => {
+    try {
+        return search.create({
+            type: "vendorbill",
+            filters:
+            [
+               ["type","anyof","VendBill"], 
+               "AND", 
+               ["mainline","is","T"],
+               "AND",
+               ["custbody_jtc_conta_de_despesa","anyof","@NONE@"]
+            ],
+            columns:
+            [
+               search.createColumn({name: "trandate", label: "Data"}),
+               search.createColumn({name: "tranid", label: "Número do documento"}),
+               search.createColumn({name: "entity", label: "Nome"}),
+               search.createColumn({name: "amount", label: "Valor"}),
+               search.createColumn({name: "custbody_jtc_conta_de_despesa", label: "Conta de Despesa"})
+            ]
+         });
          
          
 
 
-//     } catch (error) {
-//         log.error("jtc_baixar_contas_recebera_antigas_MR.getInputData", error)
-//     }
-// }
+    } catch (error) {
+        log.error("jtc_baixar_contas_recebera_antigas_MR.getInputData", error)
+    }
+}
 
 
-// export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
-//     try {
-//         // log.debug("ctx", ctx.value)
-//         const data = JSON.parse(ctx.value)
+export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
+    try {
+        log.debug("ctx", ctx.value)
+        const data = JSON.parse(ctx.value)
 
-//         const id = data.id
+        const id = data.id
 
-//         const recVendorBIll = record.load({
-//             id: id,
-//             type: record.Type.VENDOR_BILL
-//         })
+        const recVendorBIll = record.load({
+            id: id,
+            type: record.Type.VENDOR_BILL
+        })
 
-//         const item =  recVendorBIll.getSublistValue({
-//             fieldId: 'item', 
-//             sublistId: 'item',
-//             line: 0
-//         })
+        const item =  recVendorBIll.getSublistValue({
+            fieldId: 'item', 
+            sublistId: 'item',
+            line: 0
+        })
 
-//         const getExpensseAccount = search.lookupFields({
-//             id: item,
-//             type: search.Type.SERVICE_ITEM,
-//             columns: [
-//                 'expenseaccount'
-//             ]
-//         }).expenseaccount
+        const getExpensseAccount = search.lookupFields({
+            id: item,
+            type: search.Type.SERVICE_ITEM,
+            columns: [
+                'expenseaccount'
+            ]
+        }).expenseaccount
 
-//         if (!!getExpensseAccount) {
-//             log.debug("expeseAccount", getExpensseAccount)
-//             recVendorBIll.setValue({fieldId: 'custbody_jtc_conta_de_despesa', value: getExpensseAccount[0].value})
+        log.debug("expeseAccount", getExpensseAccount)
 
-//             const idReturn = recVendorBIll.save({ignoreMandatoryFields: true})
-//             log.audit("idReturn", idReturn)
-//         }
+        if (!!getExpensseAccount) {
+
+            if (getExpensseAccount[0].value != 527) {
+
+                recVendorBIll.setValue({fieldId: 'custbody_jtc_conta_de_despesa', value: getExpensseAccount[0].value})
+                const idReturn = recVendorBIll.save({ignoreMandatoryFields: true})
+                log.audit("idReturn", idReturn)
+            }
 
 
-//     } catch (error) {
-//         log.error("jtc_baixar_contas_receber_antigas_MR.map", error)
-//     }
-// }
+        }
+
+
+    } catch (error) {
+        log.error("jtc_baixar_contas_receber_antigas_MR.map", error)
+    }
+}
 
 
 
