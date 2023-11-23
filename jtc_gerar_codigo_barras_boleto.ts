@@ -8,6 +8,7 @@ import * as log from 'N/log'
 import * as record from 'N/record'
 import * as format from 'N/format'
 import * as file from 'N/file'
+import * as https from 'N/https'
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx:EntryPoints.UserEvent.beforeSubmitContext) => {
     
@@ -377,17 +378,19 @@ const bankSlipHTML = (idRec) => {
         bankSlip += "<td style= \"border: 1px solid black; line-height: 250%; line-height: 0.2;\"  colspan=\"6\">"
         bankSlip += "<label style=\"font-size: 9px;\">Código de Barras</label>"
         bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold;\"> <br></p>"
-        bankSlip += "<barcode codetype=\"code128\" showtext=\"'" + digitableLine.toString() + "'\"/>" //*atenção ao barcode
-
+        // bankSlip += "<barcode codetype=\"code128\" showtext=\"'" + digitableLine.toString() + "'\"/>" //*atenção ao barcode
+        const url = 'https://barcodes.pro/get/generator?f=svg&s=itf14&d='+barsCode+'&cm=url%28%23black%29&sf=0.9&sy=0.5&ts=10&th=10'
+        const requesp = https.get({url: url})
+        bankSlip += requesp.body
         //* bankSlip += "<barcode codetype=\"code128\" showtext=\"false\" height=\"15px\" width=\"420px\" value=\"" + barsCode + "\"/>" //*atenção ao barcode
-        bankSlip += "<svg id=\"barcode\" ></svg>"
+        // bankSlip += "<svg id=\"barcode\" ></svg>"
         bankSlip += "<script>"
-        bankSlip += "JsBarcode(\"#barcode\",'" + digitableLine.toString() + "', {"
-        bankSlip += "format: \"CODE128\" ,"
-        bankSlip += "displayValue: true,"
-        bankSlip += "fontSize: 15,"
-        bankSlip += "margin: 15"
-        bankSlip += "})"
+        // bankSlip += "JsBarcode(\"#barcode\",'" + digitableLine.toString() + "', {"
+        // bankSlip += "format: \"CODE128\" ,"
+        // bankSlip += "displayValue: true,"
+        // bankSlip += "fontSize: 15,"
+        // bankSlip += "margin: 15"
+        // bankSlip += "})"
         bankSlip += "</script >"
         bankSlip += "</td></tr>"
 
@@ -403,7 +406,12 @@ const bankSlipHTML = (idRec) => {
             description: 'Boleto bancário',
             folder: 17
         })
-        bankSlipObj.save()
+        
+        const idFile = bankSlipObj.save()
+        const urlFile = file.load({id: idFile }).url
+
+        setBankSlip.setValue({fieldId: 'custrecord_jtc_pdf_do_boleto', value: `https://7414781.app.netsuite.com${urlFile}`})
+        setBankSlip.save()
 
 
         const senderId = -5

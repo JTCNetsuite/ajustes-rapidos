@@ -10,6 +10,8 @@ import * as log from 'N/log'
 import * as search from 'N/search'
 import * as record from 'N/record'
 import * as file from 'N/file'
+
+
 export const getInputData: EntryPoints.MapReduce.getInputData = () => {
 
     
@@ -25,8 +27,6 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
 
 export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) =>  {
     try {
-
-
 
         log.debug("ctx", ctx.value)
         const values = JSON.parse(ctx.value)

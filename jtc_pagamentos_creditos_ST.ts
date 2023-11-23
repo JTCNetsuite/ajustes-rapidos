@@ -359,12 +359,10 @@ const searchTransactions = (ctx: EntryPoints.Suitelet.onRequestContext) => {
                search.createColumn({name: 'terms'}),
                search.createColumn({
                   name: "trandate",
-                  sort: search.Sort.DESC,
                   label: "Data"
                }),
                search.createColumn({
                   name: "tranid",
-                  sort: search.Sort.DESC,
                   label: "Num. CR"
                }),
                search.createColumn({name: "type", label: "Tipo"}),
@@ -384,6 +382,7 @@ const searchTransactions = (ctx: EntryPoints.Suitelet.onRequestContext) => {
                }),
                search.createColumn({
                   name: "duedate",
+                  sort: search.Sort.DESC,
                   join: "installment",
                   label: "Data de vencimento"
                }),
