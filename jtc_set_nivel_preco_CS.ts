@@ -30,14 +30,20 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
             const subClient = clientData.subsidiary[0].value
             const priceClient = clientData.pricelevel[0].value
             const ufClient = clientData['Address.custrecord_enl_uf'][0].text
+            
+            // ** field custcoljtc_preco_tabela
 
             console.log("clienteData", clientData)
             console.log("uf", ufClient)
             const sub = curr.getValue("subsidiary")
-            // console.log(sub)
 
+            const currentItem = curr.getCurrentSublistValue({
+                fieldId: 'item',
+                sublistId: 'item'
+            })
+
+            let price = priceClient
             if (sub != subClient) {
-                let price
                 if (sub == 7 && ufClient == 'SP') {
                     console.log("ok")
                     if (priceClient == 1 || priceClient == 3) {
@@ -56,11 +62,52 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                         sublistId: 'item',
                         value: price
                     })
+                   
+
                     
                 }
+                if (sub == 7 && ufClient != 'SP') {
+                    console.log("dif")
+                    curr.setCurrentSublistValue({
+                        fieldId: 'price',
+                        sublistId: 'item',
+                        value: priceClient
+                    })
+
+                   
+                }
                 
-               
             }
+            var inventoryitemSearchObj = search.create({
+                type: "inventoryitem",
+                filters:
+                [
+                    ["type","anyof","InvtPart"], 
+                    "AND", 
+                    ["pricing.pricelevel","anyof", price], 
+                    "AND", 
+                    ["internalid","anyof",currentItem]
+                ],
+                columns:
+                [
+                   search.createColumn({
+                      name: "unitprice",
+                      join: "pricing",
+                      label: "Preço unitário"
+                   }),
+                   search.createColumn({
+                      name: "pricelevel",
+                      join: "pricing",
+                      label: "Nível de preço"
+                   })
+                ]
+            }).run().getRange({start: 0, end: 1})
+            console.log(inventoryitemSearchObj[0].getValue({name: 'unitprice', join:'pricing' }))
+            curr.setCurrentSublistValue({
+                fieldId: 'custcoljtc_preco_tabela',
+                sublistId: 'item',
+                value: inventoryitemSearchObj[0].getValue({name: 'unitprice', join:'pricing' })
+            })
         }
 
     } catch (error) {
