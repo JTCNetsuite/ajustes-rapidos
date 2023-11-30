@@ -67,12 +67,31 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
 
                     
                 }
-                if (sub == 7 && ufClient != 'SP') {
+                if (sub == 7 &&  (ufClient != 'SP' || ufClient != 'MG')) {
                     console.log("dif")
                     curr.setCurrentSublistValue({
                         fieldId: 'price',
                         sublistId: 'item',
                         value: priceClient
+                    })
+
+                   
+                }
+                if (sub == 3 && ufClient == 'MG') {
+                    console.log("dif")
+                    if (priceClient == 1 || priceClient == 3) {
+                        price = 6
+                    } 
+                    if (priceClient == 2) {
+                        price = 7
+                    }
+                    if (priceClient == 9) {
+                        price = 8
+                    }
+                    curr.setCurrentSublistValue({
+                        fieldId: 'price',
+                        sublistId: 'item',
+                        value: price
                     })
 
                    
@@ -113,5 +132,37 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
 
     } catch (error) {
         console.log("jtc_set_nivel_preco_CS",error)
+    }
+}
+
+export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.Client.fieldChangedContext) => {
+    try {
+        const curr = ctx.currentRecord
+        if (ctx.fieldId == 'custcol_jtc_desc_percent' && ctx.sublistId == 'item') {
+            console.log(ctx.line)
+            // const desc = curr.getSublistField({fieldId: 'custcol_jtc_prec_uni_min', sublistId: 'item', line: ctx.line })
+            const preco = curr.getCurrentSublistValue({fieldId: 'custcoljtc_preco_tabela', sublistId: 'item'})
+            const min = curr.getCurrentSublistValue({fieldId: 'custcol_jtc_prec_uni_min', sublistId: 'item'})
+
+            if (preco != min) {
+                alert("Você pode escolher um tipo de desconto!")
+                curr.setCurrentSublistValue({fieldId: 'custcol_jtc_desc_percent', sublistId: 'item', value: 0, ignoreFieldChange: true})
+            }
+        }
+        if (ctx.fieldId == 'custcol_jtc_prec_uni_min' && ctx.sublistId == 'item') {
+            const preco = curr.getCurrentSublistValue({fieldId: 'custcoljtc_preco_tabela', sublistId: 'item'})
+            // const min = curr.getCurrentSublistValue({fieldId: 'custcol_jtc_prec_uni_min', sublistId: 'item'})
+
+            const desc= Number(curr.getCurrentSublistValue({fieldId: 'custcol_jtc_desc_percent', sublistId: 'item'}))
+            if (desc > 0) {
+                alert("Só permitido um tipo de desconto")
+                curr.setCurrentSublistValue({fieldId: 'custcol_jtc_prec_uni_min', sublistId: 'item', value: preco, ignoreFieldChange: true})
+            }
+        }
+
+
+
+    } catch (error) {
+        console.log(error)
     }
 }
