@@ -22,12 +22,15 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
                 columns: [
                     'Address.custrecord_enl_uf'
                 ]
-            })['Address.custrecord_enl_uf']
-
+            })['Address.custrecord_enl_uf'][0].text
+            console.log(uf, 'VERIFICAR')
             if (uf != 'SP' && uf != 'MG') {
                 console.log("diferente de minas e são paulo")
 
                 curr.setValue({fieldId: 'subsidiary', value: 7})
+            }else {
+                console.log("cidade sp")
+                curr.setValue({fieldId: 'subsidiary', value: 3})
             }
         }   
 

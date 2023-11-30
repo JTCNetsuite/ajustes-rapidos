@@ -15,7 +15,7 @@ import * as search from 'N/search'
 export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Client.postSourcingContext) => {
     try {
         const curr = ctx.currentRecord
-        console.log("ctx field", ctx.fieldId)
+        // console.log("ctx field", ctx.fieldId)
         if (ctx.fieldId == 'item' && ctx.sublistId == 'item') {
             const clientID = curr.getValue("entity")
             
