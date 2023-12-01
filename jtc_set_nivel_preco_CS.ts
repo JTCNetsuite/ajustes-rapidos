@@ -88,16 +88,24 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                     if (priceClient == 9) {
                         price = 8
                     }
-                    curr.setCurrentSublistValue({
-                        fieldId: 'price',
-                        sublistId: 'item',
-                        value: price
-                    })
+                }
 
-                   
+                if (sub == 3 && ufClient == "SP") {
+                    if (priceClient == 6) {
+                        price = 1
+                    }
+                    if (priceClient == 7) {
+                        price = 2
+                    }
                 }
                 
             }
+            curr.setCurrentSublistValue({
+                fieldId: 'price',
+                sublistId: 'item',
+                value: price
+            })
+            console.log("price", price)
             var inventoryitemSearchObj = search.create({
                 type: "inventoryitem",
                 filters:
