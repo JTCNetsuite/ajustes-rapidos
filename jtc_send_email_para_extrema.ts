@@ -151,7 +151,7 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
             log.debug("recepientes",recipients)
             try {
                 email.send({
-                    author: 7134,
+                    author: 168,
                     body: `Olá, ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO. Seguem a Nota Fiscal em PDF e o XML anexos. Para demais informações, entre em contato com nosso setor de vendas. <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
                     subject: String(pedido_vendas),
                     recipients: recipients[0],
@@ -165,14 +165,14 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
 
             try {
                 email.send({
-                    author: 7134,
+                    author: 168,
                     body: `Olá, ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO. Seguem a Nota Fiscal em PDF e o XML anexos. Para demais informações, entre em contato com nosso setor de vendas. <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
                     subject: String(pedido_vendas),
                     recipients: recipients[1],
                     attachments: [fileXml]
                 })
                 log.audit("Email Enviado customer", "ENVIADO")
-                
+
             } catch (error) {
                 log.error("jtc_send_email_erro.ENVIADO", error)
             }
