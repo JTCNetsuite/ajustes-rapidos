@@ -46,54 +46,48 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                     }).run().getRange({start: 0, end:1})
     
                     log.debug("searchXMl", searchXML)
-                    
-                    const recordTransportadora = record.load({
-                        type: 'customrecord_enl_transportadoras',
-                        id: transportadora
-                    })
-    
-                    const fonecedor_trans = recordTransportadora.getValue("custrecord_enl_codigotransportadoras")
-                    
-                    const recordForncedor = record.load({
-                        type: record.Type.VENDOR,
-                        id: fonecedor_trans
-                    })
-    
-                    const email_trans = String(recordForncedor.getValue('email'))
-    
-                    log.debug("email transportador", email_trans)
-                    
                     if (searchXML.length > 0 ) {
                         const idFile: any = searchXML[0].getValue({name: 'internalid', join: 'file'})
                         log.debug("idFile", idFile)
     
                         const fileXml = file.load({id: idFile})
-
-                        if (!!email_trans) {
-                            if (subsidiary == "7" || subsidiary == 7) {
-                                const body = `Segue o anexo do Xml <br></br>
-                                    <a href="${link_nf}">Link da nf</a>
-                                    `
-                           
-                                email.send({
-                                    author: 4,
-                                    body: body,
-                                    subject: `NF ${nf}`,
-                                    recipients: [email_trans],
-                                    // cc: ['denis@jtcd.com.br'],
-                                    attachments: [fileXml]
-                                })
-            
-                                const invoice = record.load({type: record.Type.INVOICE, id: ctx.newRecord.id})
-            
-                                invoice.setValue({fieldId: 'custbody_jtc_envio_email_transportador', value: true})
-                                invoice.save({ignoreMandatoryFields: true})
-                            }
-                        }
-                        
-
                         enviarEmailParaCliente(ctx, link_nf, fileXml)
+                       
+                        if (subsidiary == "7" || subsidiary == 7) {
+                            const recordTransportadora = record.load({
+                                type: 'customrecord_enl_transportadoras',
+                                id: transportadora
+                            })
+            
+                            const fonecedor_trans = recordTransportadora.getValue("custrecord_enl_codigotransportadoras")
+                            
+                            const recordForncedor = record.load({
+                                type: record.Type.VENDOR,
+                                id: fonecedor_trans
+                            })
+            
+                            const email_trans = String(recordForncedor.getValue('email'))
+                            log.debug("email transportador", email_trans)
+                
+                            const body = `Segue o anexo do Xml <br></br>
+                                <a href="${link_nf}">Link da nf</a>
+                                `
                         
+                            email.send({
+                                author: 4,
+                                body: body,
+                                subject: `NF ${nf}`,
+                                recipients: [email_trans],
+                                // cc: ['denis@jtcd.com.br'],
+                                attachments: [fileXml]
+                            })
+        
+                            const invoice = record.load({type: record.Type.INVOICE, id: ctx.newRecord.id})
+        
+                            invoice.setValue({fieldId: 'custbody_jtc_envio_email_transportador', value: true})
+                            invoice.save({ignoreMandatoryFields: true})
+                        }
+                    
                     }
     
                     
