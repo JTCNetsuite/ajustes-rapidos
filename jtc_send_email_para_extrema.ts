@@ -63,35 +63,37 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
     
                     log.debug("email transportador", email_trans)
                     
-                    if (searchXML.length > 0 && !!email_trans) {
+                    if (searchXML.length > 0 ) {
                         const idFile: any = searchXML[0].getValue({name: 'internalid', join: 'file'})
                         log.debug("idFile", idFile)
     
                         const fileXml = file.load({id: idFile})
 
-                        
-                        if (subsidiary == "7" || subsidiary == 7) {
-                            const body = `Segue o anexo do Xml <br></br>
-                                <a href="${link_nf}">Link da nf</a>
-                                `
-                       
-                            email.send({
-                                author: 4,
-                                body: body,
-                                subject: `NF ${nf}`,
-                                recipients: [email_trans],
-                                // cc: ['denis@jtcd.com.br'],
-                                attachments: [fileXml]
-                            })
-        
-                            const invoice = record.load({type: record.Type.INVOICE, id: ctx.newRecord.id})
-        
-                            invoice.setValue({fieldId: 'custbody_jtc_envio_email_transportador', value: true})
-                            invoice.save({ignoreMandatoryFields: true})
+                        if (!!email_trans) {
+                            if (subsidiary == "7" || subsidiary == 7) {
+                                const body = `Segue o anexo do Xml <br></br>
+                                    <a href="${link_nf}">Link da nf</a>
+                                    `
+                           
+                                email.send({
+                                    author: 4,
+                                    body: body,
+                                    subject: `NF ${nf}`,
+                                    recipients: [email_trans],
+                                    // cc: ['denis@jtcd.com.br'],
+                                    attachments: [fileXml]
+                                })
+            
+                                const invoice = record.load({type: record.Type.INVOICE, id: ctx.newRecord.id})
+            
+                                invoice.setValue({fieldId: 'custbody_jtc_envio_email_transportador', value: true})
+                                invoice.save({ignoreMandatoryFields: true})
+                            }
                         }
+                        
 
                         enviarEmailParaCliente(ctx, link_nf, fileXml)
-    
+                        
                     }
     
                     
