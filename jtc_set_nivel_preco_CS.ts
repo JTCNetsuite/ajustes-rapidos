@@ -56,15 +56,6 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                     if (priceClient == 9) {
                         price = 8
                     }
-
-                    
-                    curr.setCurrentSublistValue({
-                        fieldId: 'price',
-                        sublistId: 'item',
-                        value: price
-                    })
-                   
-
                     
                 }
                 if (sub == 7 &&  (ufClient != 'SP' || ufClient != 'MG')) {
