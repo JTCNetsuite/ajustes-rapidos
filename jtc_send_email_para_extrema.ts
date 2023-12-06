@@ -133,6 +133,10 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
                     name: "email",
                     join: "customer",
                     label: "E-mail"
+                 }),
+                 search.createColumn({
+                    name: 'custentity_jtc_email_receita',
+                    join: 'customer'
                  })
             ]
         }).run().getRange({start: 0, end: 1})
@@ -140,7 +144,8 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
         if (searchEmails.length  > 0 ) {
             const recipients: any[] = [
                 searchEmails[0].getValue({name: 'email', join: 'partner'}),
-                searchEmails[0].getValue({name: 'email', join: 'customer'})
+                searchEmails[0].getValue({name: 'email', join: 'customer'}),
+                searchEmails[0].getValue({name: 'custentity_jtc_email_receita', join: 'customer'})
             ]
             log.debug("recepientes",recipients)
             try {
@@ -149,6 +154,19 @@ const enviarEmailParaCliente = (ctx: EntryPoints.UserEvent.afterSubmitContext, l
                     body: `Olá, ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO. Seguem a Nota Fiscal em PDF e o XML anexos. Para demais informações, entre em contato com nosso setor de vendas. <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
                     subject: String(pedido_vendas),
                     recipients: recipients[0],
+                    attachments: [fileXml]
+                })
+                
+                log.audit("Email Enviado partner", "ENVIADO")
+            } catch (error) {
+                log.error("jtc_send_email_erro.ENVIADO", error)
+            }
+            try {
+                email.send({
+                    author: 168,
+                    body: `Olá, ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi ENVIADO. Seguem a Nota Fiscal em PDF e o XML anexos. Para demais informações, entre em contato com nosso setor de vendas. <br></br> <a href="${link_nf}">acesse sua nf clicando aqui!</a>`,
+                    subject: String(pedido_vendas),
+                    recipients: recipients[2],
                     attachments: [fileXml]
                 })
                 

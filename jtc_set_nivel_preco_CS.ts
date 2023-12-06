@@ -31,6 +31,7 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
             const subClient = clientData.subsidiary[0].value
             const priceClient = clientData.pricelevel[0].value
             const ufClient = clientData['Address.custrecord_enl_uf'][0].text
+            const priceText = clientData.pricelevel[0].text
             
             // ** field custcoljtc_preco_tabela
 
@@ -42,60 +43,84 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                 fieldId: 'item',
                 sublistId: 'item'
             })
+            const states_12_percent = ['MG', 'SP', 'PR', 'RS', 'RJ', 'SC']
 
             let price = priceClient
             if (sub != subClient) {
-                if (sub == 7 && ufClient == 'SP') {
-                    console.log("ok")
-                    if (priceClient == 1 || priceClient == 3) {
-                        price = 6
-                    } 
-                    if (priceClient == 2) {
-                        price = 7
-                    }
-                    if (priceClient == 9) {
-                        price = 8
-                    }
-                    
-                }
-                if (sub == 7 &&  (ufClient != 'SP' || ufClient != 'MG')) {
-                    console.log("dif")
-                    curr.setCurrentSublistValue({
-                        fieldId: 'price',
-                        sublistId: 'item',
-                        value: priceClient
-                    })
-
+               
+                // ** PEDIDO FORA DE SÃO PAULO(SP) OU EXTREMA(MG) PARA QUALQUER OUTRO ESTADO QUE SEJA DIFERENTE DE SP/MG
+                if ((sub == 7 || sub == 3) && (ufClient != 'SP' || ufClient != 'MG')) {
+                    price = priceClient
                    
                 }
-                if (sub == 3 && ufClient == 'MG') {
-                    console.log("dif")
-                    if (priceClient == 1 || priceClient == 3) {
+
+                //** PEDIDOS DE SÃO PAULO(SP) PARA EXTREMA(MG) */
+                if (sub == 3 && ufClient == "MG" ) {
+                    if(priceClient == 1 || priceClient == 4) {
                         price = 6
                     } 
+
                     if (priceClient == 2) {
-                        price = 7
+                        price = 10
                     }
-                    if (priceClient == 9) {
+                    if (priceClient == 5 || priceClient == 9) {
                         price = 8
                     }
                 }
+                //** PEDIDOS DE EXTREMA(MG) PARA EXTREMA(MG) */
+                if (sub == 7 && ufClient == "MG") {
+                    if (priceClient == 6) {
+                        price = 1
+                    }
 
+                    if (priceClient == 10 || priceClient == 7) {
+                        price = 2
+                    }
+
+                    if (priceClient == 8) {
+                        price == 5
+                    }
+                }
+                
+                //** PEDIDOS DE EXTREMA(MG) PARA SÃO PAULO */
+                if (sub == 7 && ufClient == "SP") {
+                    if(priceClient == 1 || priceClient == 4) {
+                        price = 6
+                    } 
+
+                    if (priceClient == 2) {
+                        price = 10
+                    }
+                    if (priceClient == 5 || priceClient == 9) {
+                        price = 8
+                    }
+                }
+                
+                //** PEDIDOS DE SÃO PAULO(SP) PARA SÃO PAULO(SP) */
                 if (sub == 3 && ufClient == "SP") {
                     if (priceClient == 6) {
                         price = 1
                     }
-                    if (priceClient == 7) {
+
+                    if (priceClient == 10 || priceClient == 7) {
                         price = 2
                     }
+
+                    if (priceClient == 8) {
+                        price == 5
+                    }
                 }
+
                 
+
+
+                curr.setCurrentSublistValue({
+                    fieldId: 'price',
+                    sublistId: 'item',
+                    value: price
+                })
             }
-            curr.setCurrentSublistValue({
-                fieldId: 'price',
-                sublistId: 'item',
-                value: price
-            })
+            
             console.log("price", price)
             var inventoryitemSearchObj = search.create({
                 type: "inventoryitem",
