@@ -80,6 +80,9 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
 
             }
 
+            log.debug("totalAberto", total_aberto)
+            log.debug("totalAtraso", total_em_atraso)
+
 
             const setFinanceiro = record.submitFields({
                 id: currId, 
