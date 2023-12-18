@@ -16,24 +16,26 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
 export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.UserEvent.beforeLoadContext) => {
 
     // const field = ctx.form.getField({id: 'closeremaining'})
-
-    const curr = ctx.newRecord
+    if (ctx.type == ctx.UserEventType.VIEW) {
+        const curr = ctx.newRecord
    
-    const searchAtendimento = search.create({
-        type: search.Type.ITEM_FULFILLMENT,
-        filters: [
-            ['mainline', search.Operator.IS, "T"],
-                "AND",
-            ['createdfrom', search.Operator.ANYOF, curr.id]
-        ]
-    }).runPaged().count
-
-    log.debug("searchAtenfimento", searchAtendimento)
-
-
-    if (searchAtendimento > 0) {
-        ctx.form.removeButton({id: 'closeremaining'})
+        const searchAtendimento = search.create({
+            type: search.Type.ITEM_FULFILLMENT,
+            filters: [
+                ['mainline', search.Operator.IS, "T"],
+                    "AND",
+                ['createdfrom', search.Operator.ANYOF, curr.id]
+            ]
+        }).runPaged().count
+    
+        log.debug("searchAtenfimento", searchAtendimento)
+    
+    
+        if (searchAtendimento > 0) {
+            ctx.form.removeButton({id: 'closeremaining'})
+        }
     }
+    
 
 
     // log.debug("fiedl", field)
