@@ -17,6 +17,12 @@ export const each: EntryPoints.MassUpdate.each = (ctx: EntryPoints.MassUpdate.ea
             type: record.Type.CUSTOMER_PAYMENT
         })
 
+        const conta = recPayment.getValue("account")
+        if (conta == 724 || conta == '724') {
+            recPayment.setValue({fieldId: 'account', value: 620})
+            recPayment.setValue({fieldId: 'custbody_jtc_cont_banc_inter', value: null})
+        }
+
         const idInvoice = recPayment.getSublistValue({
             sublistId: 'apply',
             fieldId: 'doc',
