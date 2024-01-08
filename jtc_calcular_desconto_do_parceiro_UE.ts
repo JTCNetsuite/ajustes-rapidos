@@ -10,11 +10,12 @@ import * as log from 'N/log'
 import * as search from 'N/search'
 
 
-export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
+export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.UserEvent.afterSubmitContext) => {
     try {
 
-        if (ctx.type == ctx.UserEventType.CREATE || ctx.type == ctx.UserEventType.EDIT) {
+        if (ctx.type == ctx.UserEventType.CREATE) {
             const curr = ctx.newRecord
+
             const vTotal = Number(curr.getValue('total'))
 
             const customer = curr.getValue("entity")
@@ -57,8 +58,6 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
                         value: desconto
                     })
                 }
-
-
 
             }
 

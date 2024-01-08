@@ -7,7 +7,7 @@
 import { EntryPoints } from "N/types"
 import * as log from 'N/log'
 import * as search from "N/search"
-
+import * as runtime from 'N/runtime'
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
 
@@ -30,9 +30,17 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
     
         log.debug("searchAtenfimento", searchAtendimento)
     
-    
-        if (searchAtendimento > 0) {
+        const status_inte = curr.getValue("custbody_jtc_integration_status")
+          
+        const currUser = runtime.getCurrentUser().role
+        
+        if (searchAtendimento > 0 ) {
             ctx.form.removeButton({id: 'closeremaining'})
+        }
+        if  (status_inte == 1) {
+            if (currUser != 3 ) {
+                ctx.form.removeButton({id: 'closeremaining'})
+            }
         }
     }
     

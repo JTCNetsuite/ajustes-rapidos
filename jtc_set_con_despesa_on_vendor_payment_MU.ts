@@ -34,9 +34,9 @@ export const each: EntryPoints.MassUpdate.each = (ctx: EntryPoints.MassUpdate.ea
 
 
         
-        // const idReturn = vendorBill.save({ignoreMandatoryFields: true})
+        const idReturn = vendorBill.save({ignoreMandatoryFields: true})
 
-        // log.audit("idRetturn", idReturn)
+        log.audit("idRetturn", idReturn)
 
 
     } catch (error) {

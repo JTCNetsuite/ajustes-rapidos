@@ -28,6 +28,7 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
                 console.log("diferente de minas e são paulo")
 
                 curr.setValue({fieldId: 'subsidiary', value: 7})
+                curr.setValue({fieldId: 'custbody_enl_order_documenttype', value:  12})
             }else {
                 console.log("cidade sp")
                 curr.setValue({fieldId: 'subsidiary', value: 3})
