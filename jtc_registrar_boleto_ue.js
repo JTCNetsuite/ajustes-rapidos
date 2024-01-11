@@ -129,7 +129,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
             }
             else if (response.code == 400) {
 
-                bankSlipRejected(response.body, response.code, idRec)
+                bankSlipRejected(response.body, response.code, idRec, boletoBody.numeroTituloBeneficiario)
                 bankSlipHTML(idRec) //* criar html do boleto --> MUDAR DE FUNÇÃO NO FIM DO PROCESSO.
                 //* bankSlipXML(idRec)  //* criar xml do boleto --> MUDAR DE FUNÇÃO NO FIM DO PROCESSO.
                 //* emailBankSlip(id)
@@ -296,36 +296,43 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
 
         }   //* Fim da function bankSlipCreated()
 
-        function bankSlipRejected(body, code, idRec) {
-
+        function bankSlipRejected(body, code, idRec, nf_num) {
+            // ** arrumar mais pra frente
             try {
-                log.debug({
-                    title: 'linha 264 - função bankSlipRejected - boleto rejeitado, os dados s seguir ---->',
-                    details: ' tipo do retorno do banco:  ' + typeof body + ' --> código do banco:  ' + code + ' --> id do registro: ' + idRec
-                })
+                // const parcelaCanb = record.load({
+                //     id: idRec,
+                //     type: 'customrecord_dk_cnab_aux_parcela'
+                // })
+                // const pedidoenviado = parcelaCanb.getValue("custrecord_cnab_env_para_banco")
 
-                const codeBank = code + ' - REQUISIÇÃO INVÁLIDA: BOLETO JÁ CRIADO OU DADOS INCORRETOS'
-                const senderId = -5
-                const bodyJSON = JSON.parse(body)
-                const erros = bodyJSON.erros
-                const mensagem = 'Atenção boleto não gerado.   Código do erro: ' + code + '. Motivo: ' + erros[0].mensagem + '.'
-                const emails = 'cobranca@jtcd.com.br'
-                const subject = 'CÓDIGO: ' + code + '   ->  REQUISIÇÃO INVÁLIDA: boleto já criado ou dados incorretos.'
+                // log.debug({
+                //     title: 'linha 264 - função bankSlipRejected - boleto rejeitado, os dados s seguir ---->',
+                //     details: ' tipo do retorno do banco:  ' + typeof body + ' --> código do banco:  ' + code + ' --> id do registro: ' + idRec
+                // })
+                // if (pedidoenviado == "F" || pedidoenviado == true) {
+                //     const codeBank = code + ' - REQUISIÇÃO INVÁLIDA: BOLETO JÁ CRIADO OU DADOS INCORRETOS'
+                //     const senderId = -5
+                //         const bodyJSON = JSON.parse(body)
+                //         const erros = bodyJSON.erros
+                //         const mensagem = 'Atenção boleto não gerado para nf '+nf_num +'.   Código do erro: ' + code + '. Motivo: ' + erros[0].mensagem + '.'
+                //         const emails = ['william@jtcd.com.br', 'netsuite@jtcd.com.br']
+                //         const subject = 'CÓDIGO: ' + code + '   ->  REQUISIÇÃO INVÁLIDA: boleto já criado ou dados incorretos.'
 
-                log.debug({
-                    title: 'linha 277 - função bankSlipRejected - boleto rejeitado, os dados s seguir ---->',
-                    details: ' campos do retorno do banco JSON:   ' + mensagem + '  --> tipo de dados:  ' + typeof mensagem
-                })
+                //         log.debug({
+                //             title: 'linha 277 - função bankSlipRejected - boleto rejeitado, os dados s seguir ---->',
+                //             details: ' campos do retorno do banco JSON:   ' + mensagem + '  --> tipo de dados:  ' + typeof mensagem
+                //         })
 
-                email.send({
+                //         email.send({
+                //             author: senderId,
+                //             recipients: emails,
+                //             subject: subject,
+                //             body: mensagem
+                //         })
 
-                    author: senderId,
-                    recipients: emails,
-                    subject: subject,
-                    body: mensagem
-                })
-
-                setBankSlipError(idRec, codeBank)
+                //         setBankSlipError(idRec, codeBank)
+                // }
+                
 
             } catch (error) {
                 log.debug('--> linha 292 >> funcão bankSlipRejected - email rejeitado >> o erro é:  ', error.message)
@@ -601,7 +608,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 bankSlip += "<tr style=\"line-height: 0.2;  height: 30px;\">"
                 bankSlip += "<td style= \"border: 1px solid black; width: 75%;\"  colspan=\"5\">"
                 bankSlip += "<label style=\"font-size: 9px;\">Informações de Responsabilidade do Beneficiário</label>"
-                bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold;\"><br></p>"
+                bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">Somente pagar boleto impresso da JTC Distribuidora. </p><p>Desconsidere qualquer mensagem sobre descontos nas duplicatas,</p> <p>que não venham com a extensão: @jtcd.com.br; Qualquer dificuldade em pagar o boleto entrar em contato pelo tel: (11) 3322-9300</p>"
                 bankSlip += "</td>"
                 bankSlip += "<td style= \"border: 1px solid black; width: 25%\"  colspan=\"2\">"
                 bankSlip += "<label style=\"font-size: 9px;\">Valor Cobrado</label>"

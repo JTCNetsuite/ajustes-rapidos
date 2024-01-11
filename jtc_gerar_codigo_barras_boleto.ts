@@ -357,9 +357,9 @@ const bankSlipHTML = (idRec) => {
         bankSlip += "</td></tr>"
 
         bankSlip += "<tr style=\"line-height: 0.2;  height: 30px;\">"
-        bankSlip += "<td style= \"border: 1px solid black; width: 75%;\"  colspan=\"5\">"
+        bankSlip += "<td style= \"border: 1px solid black; width: 75%; font-size: 11px;\"  colspan=\"5\">"
         bankSlip += "<label style=\"font-size: 9px;\">Informações de Responsabilidade do Beneficiário</label>"
-        bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold;\"><br></p>"
+        bankSlip += "<p style= \"font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">Somente pagar boleto impresso da JTC Distribuidora. </p><p>Desconsidere qualquer mensagem sobre descontos nas duplicatas,</p> <p>que não venham com a extensão: @jtcd.com.br; Qualquer dificuldade em pagar o boleto entrar em contato pelo tel: (11) 3322-9300</p>"
         bankSlip += "</td>"
         bankSlip += "<td style= \"border: 1px solid black; width: 25%\"  colspan=\"2\">"
         bankSlip += "<label style=\"font-size: 9px;\">Valor Cobrado</label>"
