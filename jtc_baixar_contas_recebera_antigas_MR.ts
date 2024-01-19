@@ -89,7 +89,7 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
 
         if (!!getExpensseAccount) {
 
-            if (getExpensseAccount[0].value != 527) {
+            if (getExpensseAccount[0].value != 527 ||  getExpensseAccount[0].value  != 112) {
 
                 recVendorBIll.setValue({fieldId: 'custbody_jtc_conta_de_despesa', value: getExpensseAccount[0].value})
                 const idReturn = recVendorBIll.save({ignoreMandatoryFields: true})

@@ -56,6 +56,7 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
 
                 //** PEDIDOS DE SÃO PAULO(SP) PARA EXTREMA(MG) */
                 if (sub == 3 && ufClient == "MG" ) {
+                    console.log("pedidos de Sp para MG")
                     if(priceClient == 1 || priceClient == 4) {
                         price = 6
                     } 
