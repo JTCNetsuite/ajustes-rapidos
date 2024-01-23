@@ -9,30 +9,72 @@ import * as log from 'N/log'
 import * as search from 'N/search'
 import * as record from 'N/record'
 import * as https from 'N/https'
-
+import * as query from 'N/query'
 
 export const getInputData: EntryPoints.MapReduce.getInputData = () => {
     try {
+        // const data = getIntergrcaoBB()
+        // const token = getAccessToken(data.url_token, data.authorization)
+        // const authObj = token.body.token_type + " " + token.body.access_token
+
+        // const headers = {
+        //     Authorization: authObj,
+        //     Accept: 'application/json',
+        // };
+
+        // const boletos = [];
+
+        // let indice = 0;
+
+        // while (true) {
+        //     let url = `https://api.bb.com.br/cobrancas/v2/boletos?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&indicadorSituacao=A&agenciaBeneficiario=3221&contaBeneficiario=19570&boletoVencido=S&indice=${indice}`;
+
+        //     const response = JSON.parse(https.get({url: url, headers: headers}).body)
+        //     // log.debug("response", response)
+
+        //     const indicador = response.indicadorContinuidade;
+
+        //     if (indicador === 'S') {
+        //         indice = response.proximoIndice;
+        //           url +=`&indice=${indice}`;
+        //         const boletosData = response.boletos;
+        //         boletos.push(...boletosData);
+        //     } else {
+        //         const boletosData = response.boletos;
+        //         boletos.push(...boletosData);
+        //         break;
+        //     }
+        // }
+
+        // return boletos;
+
         return search.create({
-            type: "customerpayment",
+            type: "invoice",
             filters:
             [
-               ["type","anyof","CustPymt"], 
+               ["type","anyof","CustInvc"], 
                "AND", 
-               ["account","anyof","1"], 
+               ["mainline","is","T"], 
                "AND", 
-               ["mainline","is","T"]
+               ["status","anyof","CustInvc:B"], 
+               "AND", 
+               ["terms","noneof","48","146"]
             ],
             columns:
             [
-               search.createColumn({name: "trandate", label: "Data"}),
-               search.createColumn({name: "tranid", label: "Número do documento"}),
-               search.createColumn({name: "type", label: "Tipo"}),
+               search.createColumn({
+                  name: "trandate",
+                  label: "Data"
+               }),
+               search.createColumn({
+                  name: "tranid",
+                  label: "Num. CR"
+               }),
                search.createColumn({name: "entity", label: "Nome"}),
-               search.createColumn({name: "appliedtotransaction", label: "Aplicados à transação"})
+               search.createColumn({name: "statusref", label: "Status"}),
+               search.createColumn({name: "amount", label: "Valor"})
             ]
          })
-
 
     } catch (error) {
         log.error("jtc_baixar_installmentst_on_bank_MR.getInputData", error)
@@ -42,171 +84,122 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
 
 export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
     try {
-        const values = JSON.parse(ctx.value)
-        // log.debug("values", values)
+        
+        const invoiceData = JSON.parse(ctx.value)
+        log.debug("invoice", invoiceData)
+        const idInvoice = invoiceData.id
+        const data = getIntergrcaoBB()
+        const token = getAccessToken(data.url_token, data.authorization)
+        const authObj = token.body.token_type + " " + token.body.access_token
+
+        const headers = {
+            Authorization: authObj,
+            Accept: 'application/json',
+        };
 
 
-        const paymentRec = record.load({
-            type: record.Type.CUSTOMER_PAYMENT,
-            id: values.id
-        })
+        const parcelaCnab = search.create({
+            type: CTS.PARCELA_CNAB.ID,
+            filters: [
+                ['custrecord_dk_cnab_transacao', search.Operator.ANYOF, idInvoice]
+            ],
+            columns: [
+                search.createColumn({name: 'custrecord_dk_cnab_nosso_numero'})
+            ]
+        }).run().each( res => {
 
-        const lines = paymentRec.getLineCount({sublistId: 'apply'})
+            const nossNumero = res.getValue({name: 'custrecord_dk_cnab_nosso_numero'})
 
-
-        let idInvoice 
-        let numInstallment
-
-        for (var i =0; i < lines; i++) {
-            const apply = paymentRec.getSublistValue({
-                fieldId: 'apply',
-                sublistId: 'apply',
-                line: i
-            })
-
-            const doc = paymentRec.getSublistValue({
-                fieldId: 'doc',
-                sublistId: 'apply',
-                line: i
-            })
-            const type = paymentRec.getSublistValue({
-                fieldId: 'trantype',
-                sublistId: 'apply',
-                line: i
-            })
-            const refNumInstallment = paymentRec.getSublistValue({
-                fieldId: 'installmentnumber',
-                sublistId: 'apply',
-                line: i
-            })
+            const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossNumero}?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&numeroConvenio=2202864`
             
-            if (apply == "T" || apply == true) {
-                if (type == 'CustInvc') {
-                    idInvoice = doc
-                    numInstallment = refNumInstallment
+            
+            const boletoIndividual = JSON.parse(https.get({url: url, headers: headers}).body)
+            const valorPago = boletoIndividual.valorPagoSacado
+            if (!!valorPago) {
+                log.debug("boletoIndividual", boletoIndividual)
+                log.debug("valor", valorPago)
+                if (valorPago < 1) {
+                    
+                    const url_cancel = `https://api.bb.com.br/cobrancas/v2/boletos/${nossNumero}/baixar?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025`
 
-                    break
+                    const cancelarBoleto = https.post({
+                        url: url_cancel,
+                        body: JSON.stringify({
+                            "numeroConvenio":2202864
+                        }),
+                        headers: headers
+                    }).body
+
+                    log.audit("boletoCancelado", cancelarBoleto)
+
                 }
             }
-        }
-
-        let nossoNumcorreto
-        
-        if (!!numInstallment) {
-            log.debug(`INVOIDE : ${idInvoice}`, `INSTALLMENT: ${numInstallment}`)
             
-            const searchParcelaCnab = search.create({
-                type: CTS.PARCELA_CNAB.ID,
-                filters: [
-                    ["custrecord_dk_cnab_transacao", search.Operator.ANYOF, idInvoice]
-                    // "AND", 
-                    // ["custrecord_dk_cnab_utilizar_beneficiario","contains", numInstallment]
-                ],
-                columns: [
-                    search.createColumn({name: CTS.PARCELA_CNAB.NUM_CONVENIO}),
-                    search.createColumn({name: CTS.PARCELA_CNAB.NOSSO_NUMERO}),
-                    search.createColumn({name: 'custrecord_dk_cnab_utilizar_beneficiario'})
-                ]
-            }).run().each(res => {
-
-                const nosso_num = res.getValue({name:CTS.PARCELA_CNAB.NOSSO_NUMERO })
-                const numParcela = Number(String(res.getValue({name: 'custrecord_dk_cnab_utilizar_beneficiario'})).split(' ')[1])
-
-                log.debug(`Parcela ${numParcela} / ${numInstallment}`,  nosso_num)
-
-                if ( Number(numInstallment) == numParcela ) {
-                    nossoNumcorreto = nosso_num
-                }
-                return true
-            })
-
-        }
-        if(!!nossoNumcorreto) {
-            const data = getIntergrcaoBB()
-            const token = getAccessToken(data.url_token, data.authorization)
-
-            log.audit("nossoNumcorreto", nossoNumcorreto)
-            const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossoNumcorreto}/baixar?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025`
-
-            const authObj = token.body.token_type + " " + token.body.access_token
-
-            const headerArr = {};
-            headerArr['Authorization'] = authObj;
-            headerArr['Accept'] = 'application/json';
-
-            const request = https.post({
-                url: url,
-                body: JSON.stringify({
-                    "numeroConvenio":2202864
-                }),
-                headers: headerArr
-            })
-
-            log.audit("requst", request.body)
-        }
-
-
-        // const type = String(values.values.appliedtotransaction.text).split(" ")[0]
-
-        // if (type == 'Contas') {
-        //     const status = values.values['statusref.appliedToTransaction'].value
-        //     if (status == 'paidInFull') {
-        //         // log.debug("pago", values)
-
-        //         const idInvoice = values.values.appliedtotransaction.value
-        //         const data = getIntergrcaoBB()
-        //         const token = getAccessToken(data.url_token, data.authorization)
-                
-        //         log.debug("INOVICE", idInvoice)
-
-        //         const searchParcelaCnab = search.create({
-        //             type: CTS.PARCELA_CNAB.ID,
-        //             filters: [
-        //                 ["custrecord_dk_cnab_transacao", search.Operator.ANYOF, idInvoice]
-        //             ],
-        //             columns: [
-        //                 search.createColumn({name: CTS.PARCELA_CNAB.NUM_CONVENIO}),
-        //                 search.createColumn({name: CTS.PARCELA_CNAB.NOSSO_NUMERO})
-        //             ]
-        //         }).run().each( res => {
-        //             const nosso_num = res.getValue({name:CTS.PARCELA_CNAB.NOSSO_NUMERO })
-
-        //             log.debug("parcar",  nosso_num)
-
-        //             const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nosso_num}/baixar?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025`
-
-        //             const authObj = token.body.token_type + " " + token.body.access_token
-
-        //             const headerArr = {};
-        //             headerArr['Authorization'] = authObj;
-        //             headerArr['Accept'] = 'application/json';
-
-        //             const request = https.post({
-        //                 url: url,
-        //                 body: JSON.stringify({
-        //                     "numeroConvenio":2202864
-        //                 }),
-        //                 headers: headerArr
-        //             })
-
-        //             log.audit("requst", request.body)
-
-        //             return true
-        //         })
-
-        //     }
-        // }
+            return true
+        })
 
         
-        // log.debug("PROCESSO", 'FINALIZADO')
         
-
-
-
     } catch (error) {
-        log.error("jtc_baixar_installmentst_on_bank_MR.map", error)
+        log.error("errro", error)
     }
 }
+
+
+// export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
+//     try {
+//         const values = JSON.parse(ctx.value)
+//         log.debug("values", values)
+//         const nossoNumero = values.numeroBoletoBB
+
+        
+//         const sql = `SELECT custrecord_dk_cnab_num_titbeneficiario, custrecord_dk_cnab_transacao 
+//         FROM customrecord_dk_cnab_aux_parcela WHERE custrecord_dk_cnab_nosso_numero = '${nossoNumero}'`
+
+//         const res = query.runSuiteQL({
+//             query: sql
+//         }).asMappedResults()
+
+        
+//         if (res.length > 0) {
+//             log.debug("query", res)
+            
+//         } else {
+
+
+
+//             const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossoNumero}?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&numeroConvenio=2202864`
+//             const data = getIntergrcaoBB()
+//             const token = getAccessToken(data.url_token, data.authorization)
+//             const authObj = token.body.token_type + " " + token.body.access_token
+    
+//             const headers = {
+//                 Authorization: authObj,
+//                 Accept: 'application/json',
+//             };
+
+//             const boletoIndividual = JSON.parse(https.get({url: url, headers: headers}).body)
+
+//             const nf = boletoIndividual.numeroTituloCedenteCobranca
+
+//             log.audit(`boleto Indivudal: ${nossoNumero}`, nf)
+
+//             const clear_nf = extrairNumeroNF(nf)
+//             if (clear_nf != null) {
+
+//             }
+
+            
+            
+
+//         }
+
+
+
+//     } catch (error) {
+//         log.error("jtc_baixar_installmentst_on_bank_MR.map", error)
+//     }
+// }
 
 const getAccessToken = (url_token, authorization) => {
     try {
@@ -310,4 +303,26 @@ const getIntergrcaoBB = () => {
         throw e
     }
 
+}
+
+
+const extrairNumeroNF = (str) => {
+    // Verifica se a string contém "NF"
+    if (str.includes("NF")) {
+        // Usa expressão regular para extrair o número entre "NF" e "-"
+        const regex = /NF(\d+)-/;
+        const match = str.match(regex);
+
+        // Verifica se houve correspondência com a expressão regular
+        if (match && match[1]) {
+            // Retorna o número extraído
+            return match[1];
+        } else {
+            // Caso não seja possível extrair o número, retorna null ou uma mensagem de erro
+            return null;
+        }
+    } else {
+        // Caso "NF" não esteja contido na string, retorna null ou uma mensagem de erro
+        return null;
+    }
 }

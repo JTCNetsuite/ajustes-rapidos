@@ -112,6 +112,19 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                     }
                 }
 
+                if (sub == 5 && ufClient != 'PR') {
+                    if(priceClient == 1 || priceClient == 4) {
+                        price = 6
+                    } 
+
+                    if (priceClient == 2) {
+                        price = 10
+                    }
+                    if (priceClient == 5 || priceClient == 9) {
+                        price = 8
+                    }
+                }
+                
                 
 
 
