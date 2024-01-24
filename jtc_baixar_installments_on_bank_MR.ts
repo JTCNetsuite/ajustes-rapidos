@@ -56,150 +56,206 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
                "AND", 
                ["mainline","is","T"], 
                "AND", 
-               ["status","anyof","CustInvc:B"], 
+               ["installment.daysoverdue","greaterthan","1"], 
                "AND", 
-               ["terms","noneof","48","146"]
+               ["installment.amountpaid","equalto","0.00"], 
+               "AND", 
+               ["status","noneof","CustInvc:V","CustInvc:E"]
             ],
             columns:
             [
                search.createColumn({
                   name: "trandate",
+                  sort: search.Sort.DESC,
                   label: "Data"
                }),
                search.createColumn({
                   name: "tranid",
+                  sort: search.Sort.DESC,
                   label: "Num. CR"
                }),
+               search.createColumn({name: "type", label: "Tipo"}),
                search.createColumn({name: "entity", label: "Nome"}),
+               search.createColumn({name: "custbody_enl_fiscaldocnumber", label: "Nota Fiscal"}),
                search.createColumn({name: "statusref", label: "Status"}),
-               search.createColumn({name: "amount", label: "Valor"})
+               search.createColumn({
+                  name: "installmentnumber",
+                  join: "installment",
+                  sort: search.Sort.ASC,
+                  label: "Parcela"
+               }),
+               search.createColumn({
+                  name: "daysoverdue",
+                  join: "installment",
+                  label: "Dias Atraso"
+               }),
+               search.createColumn({
+                  name: "duedate",
+                  join: "installment",
+                  label: "Data de vencimento"
+               }),
+               search.createColumn({
+                  name: "status",
+                  join: "installment",
+                  label: "Status Parcela"
+               }),
+               search.createColumn({
+                  name: "amount",
+                  join: "installment",
+                  label: "Prestação "
+               }),
+               search.createColumn({name: "amount", label: "Valor Total"}),
+               search.createColumn({name: "appliedtotransaction", label: "Aplicados à transação"}),
+               search.createColumn({
+                  name: "amountpaid",
+                  join: "installment",
+                  label: "Valor pago"
+               })
             ]
          })
-
     } catch (error) {
         log.error("jtc_baixar_installmentst_on_bank_MR.getInputData", error)
     }
 } 
 
 
-export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
-    try {
-        
-        const invoiceData = JSON.parse(ctx.value)
-        log.debug("invoice", invoiceData)
-        const idInvoice = invoiceData.id
-        const data = getIntergrcaoBB()
-        const token = getAccessToken(data.url_token, data.authorization)
-        const authObj = token.body.token_type + " " + token.body.access_token
-
-        const headers = {
-            Authorization: authObj,
-            Accept: 'application/json',
-        };
-
-
-        const parcelaCnab = search.create({
-            type: CTS.PARCELA_CNAB.ID,
-            filters: [
-                ['custrecord_dk_cnab_transacao', search.Operator.ANYOF, idInvoice]
-            ],
-            columns: [
-                search.createColumn({name: 'custrecord_dk_cnab_nosso_numero'})
-            ]
-        }).run().each( res => {
-
-            const nossNumero = res.getValue({name: 'custrecord_dk_cnab_nosso_numero'})
-
-            const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossNumero}?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&numeroConvenio=2202864`
-            
-            
-            const boletoIndividual = JSON.parse(https.get({url: url, headers: headers}).body)
-            const valorPago = boletoIndividual.valorPagoSacado
-            if (!!valorPago) {
-                log.debug("boletoIndividual", boletoIndividual)
-                log.debug("valor", valorPago)
-                if (valorPago < 1) {
-                    
-                    const url_cancel = `https://api.bb.com.br/cobrancas/v2/boletos/${nossNumero}/baixar?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025`
-
-                    const cancelarBoleto = https.post({
-                        url: url_cancel,
-                        body: JSON.stringify({
-                            "numeroConvenio":2202864
-                        }),
-                        headers: headers
-                    }).body
-
-                    log.audit("boletoCancelado", cancelarBoleto)
-
-                }
-            }
-            
-            return true
-        })
-
-        
-        
-    } catch (error) {
-        log.error("errro", error)
-    }
-}
-
-
 // export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapContext) => {
 //     try {
-//         const values = JSON.parse(ctx.value)
-//         log.debug("values", values)
-//         const nossoNumero = values.numeroBoletoBB
-
         
-//         const sql = `SELECT custrecord_dk_cnab_num_titbeneficiario, custrecord_dk_cnab_transacao 
-//         FROM customrecord_dk_cnab_aux_parcela WHERE custrecord_dk_cnab_nosso_numero = '${nossoNumero}'`
+//         const invoiceData = JSON.parse(ctx.value)
+//         log.debug("invoice", invoiceData)
+//         const idInvoice = invoiceData.id
+//         const num_parcela = Number(invoiceData.values['installmentnumber.installment'])
 
-//         const res = query.runSuiteQL({
+//         const sql = `SELECT 
+//         custrecord_dk_cnab_nosso_numero, 
+//         custrecord_dk_cnab_num_titbeneficiario,
+//         custrecord_dk_cnab_utilizar_beneficiario, id
+//         FROM customrecord_dk_cnab_aux_parcela
+//         WHERE custrecord_dk_cnab_transacao = ${idInvoice} AND custrecord_dk_cnab_utilizar_beneficiario LIKE '%${num_parcela}%'`
+
+
+//         const cnabParcela = query.runSuiteQL({
 //             query: sql
 //         }).asMappedResults()
+//         // log.debug("cnabParcela", cnabParcela)
+
+//         const nossoNumero = cnabParcela[0].custrecord_dk_cnab_nosso_numero
 
         
-//         if (res.length > 0) {
-//             log.debug("query", res)
-            
-//         } else {
+//         const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossoNumero}?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&numeroConvenio=2202864`
+        
+//         const data = getIntergrcaoBB()
+//         const token = getAccessToken(data.url_token, data.authorization)
+//         const authObj = token.body.token_type + " " + token.body.access_token
 
-
-
-//             const url = `https://api.bb.com.br/cobrancas/v2/boletos/${nossoNumero}?gw-dev-app-key=4a5e515a85aa0cb8a74b71646d5ec025&numeroConvenio=2202864`
-//             const data = getIntergrcaoBB()
-//             const token = getAccessToken(data.url_token, data.authorization)
-//             const authObj = token.body.token_type + " " + token.body.access_token
-    
-//             const headers = {
-//                 Authorization: authObj,
-//                 Accept: 'application/json',
-//             };
-
-//             const boletoIndividual = JSON.parse(https.get({url: url, headers: headers}).body)
-
-//             const nf = boletoIndividual.numeroTituloCedenteCobranca
-
-//             log.audit(`boleto Indivudal: ${nossoNumero}`, nf)
-
-//             const clear_nf = extrairNumeroNF(nf)
-//             if (clear_nf != null) {
-
-//             }
-
-            
-            
-
+//         const headers = {
+//             Authorization: authObj,
+//             Accept: 'application/json',
 //         }
 
+//         const boletoIndividualRequest = https.get({
+//             url: url,
+//             headers: headers
+//         })
+
+//         if (boletoIndividualRequest.code == 200) {
+//             const boleto = JSON.parse(boletoIndividualRequest.body)
+            
+            
+//             if (boleto.valorPagoSacado > 0 ) {
+//                 log.audit("boleto Encotrado: "+ nossoNumero, boleto.valorPagoSacado)
+//                 const dtPagamento = String(boleto.dataCreditoLiquidacao).split(".")
+
+//                 const custmerPayment = record.transform({
+//                     fromId: idInvoice,
+//                     fromType: record.Type.INVOICE,
+//                     toType: record.Type.CUSTOMER_PAYMENT
+//                 })
+//                 const subId = custmerPayment.getValue('subsidiary')
+//                 if (subId == 3) {
+//                     custmerPayment.setValue({fieldId: 'account', value: 620})
+//                     // custmerPayment.setValue({fie ldId: CTS.COSTUMER_PAYMENT.ACCOUNT_CUSTOM, value: 620})
+//                 } else if(subId == 5)  {
+//                     custmerPayment.setValue({fieldId: 'account', value: 726})
+//                     custmerPayment.setValue({fieldId: 'custbody_jtc_cont_banc_inter', value: 620})
+//                 } else {
+//                     custmerPayment.setValue({fieldId: 'custbody_jtc_cont_banc_inter', value: 620})
+//                 }
+
+//                 const sublistId =  'apply'
+//                 const lineCount = custmerPayment.getLineCount({sublistId: sublistId})
 
 
+               
+
+//                 custmerPayment.setValue({fieldId: 'payment', value: boleto.valorPagoSacado})
+//                 custmerPayment.setValue({
+//                     fieldId: 'trandate',
+//                     value: new Date(`${dtPagamento[1]}/${dtPagamento[0]}/${dtPagamento[2]}`)
+//                 })
+
+//                 for (var i = 0; i < lineCount; i++) {
+//                     custmerPayment.setSublistValue({
+//                         sublistId: sublistId,
+//                         fieldId: 'apply',
+//                         line: i,
+//                         value: false
+//                     })
+    
+//                     const idInvoiceFromSublist = custmerPayment.getSublistValue({
+//                         sublistId: sublistId,
+//                         fieldId: 'doc',
+//                         line: i
+//                     })
+//                     const numInstallmentFromSublist = custmerPayment.getSublistValue({
+//                         sublistId: sublistId,
+//                         fieldId: 'installmentnumber',
+//                         line: i
+//                     })
+                    
+    
+//                     if (idInvoiceFromSublist == idInvoice && numInstallmentFromSublist == num_parcela) {
+//                         log.debug("igual e setar", "START")
+//                         custmerPayment.setSublistValue({
+//                             sublistId: sublistId,
+//                             fieldId: 'apply',
+//                             line: i,
+//                             value: true
+//                         })
+//                         const f = custmerPayment.getSublistValue({
+//                             sublistId: sublistId,
+//                             fieldId: 'apply',
+//                             line: i
+//                         })
+//                         log.debug("OK", f)
+//                     }
+//                 }
+
+//                 const idCostumrPay = custmerPayment.save()
+
+//                 if (!!idCostumrPay) {
+//                     const recParcela = record.load({
+//                         id: cnabParcela[0].id,
+//                         type: 'customrecord_dk_cnab_aux_parcela'
+//                     })
+//                     recParcela.setValue({fieldId: 'custrecord_jtc_int_boleto_pago', value: true })
+//                     const idRet = recParcela.save()
+//                     log.audit("id Custumer ", idCostumrPay)
+//                     log.audit("id ParcelaCnab ", idRet)
+//                 }
+
+//             }
+//         } else {
+//             log.debug("boleto Não Encontrado", nossoNumero)
+//         }
+
+        
 //     } catch (error) {
-//         log.error("jtc_baixar_installmentst_on_bank_MR.map", error)
+//         log.error("errro", error)
 //     }
 // }
+
 
 const getAccessToken = (url_token, authorization) => {
     try {

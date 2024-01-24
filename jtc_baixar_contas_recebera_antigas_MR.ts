@@ -31,12 +31,14 @@ import * as record from 'N/record'
 export const getInputData: EntryPoints.MapReduce.getInputData = () => {
     try {
         return search.create({
-            type: "vendorbill",
+            type: 'check',
             filters:
             [
-               ["type","anyof","VendBill"], 
-               "AND", 
+            //    ["type","anyof","VendBill"], 
+            //    "AND", 
                ["mainline","is","T"],
+            //    "AND",
+            //    ["trandate","after", "01/01/2024"],
                "AND",
                ["custbody_jtc_conta_de_despesa","anyof","@NONE@"]
             ],
@@ -66,9 +68,13 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
 
         const id = data.id
 
+        // const recVendorBIll = record.load({
+        //     id: id,
+        //     type: record.Type.VENDOR_BILL
+        // })
         const recVendorBIll = record.load({
             id: id,
-            type: record.Type.VENDOR_BILL
+            type: record.Type.CHECK
         })
 
         const item =  recVendorBIll.getSublistValue({
