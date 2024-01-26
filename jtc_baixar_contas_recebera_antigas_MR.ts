@@ -31,14 +31,14 @@ import * as record from 'N/record'
 export const getInputData: EntryPoints.MapReduce.getInputData = () => {
     try {
         return search.create({
-            type: 'check',
+            type: search.Type.VENDOR_BILL,
             filters:
             [
             //    ["type","anyof","VendBill"], 
             //    "AND", 
                ["mainline","is","T"],
-            //    "AND",
-            //    ["trandate","after", "01/01/2024"],
+               "AND",
+               ["trandate","after", "01/01/2024"],
                "AND",
                ["custbody_jtc_conta_de_despesa","anyof","@NONE@"]
             ],
@@ -52,8 +52,6 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
             ]
          });
          
-         
-
 
     } catch (error) {
         log.error("jtc_baixar_contas_recebera_antigas_MR.getInputData", error)
@@ -68,14 +66,14 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
 
         const id = data.id
 
-        // const recVendorBIll = record.load({
-        //     id: id,
-        //     type: record.Type.VENDOR_BILL
-        // })
         const recVendorBIll = record.load({
             id: id,
-            type: record.Type.CHECK
+            type: record.Type.VENDOR_BILL
         })
+        // const recVendorBIll = record.load({
+        //     id: id,
+        //     type: record.Type.CHECK
+        // })
 
         const item =  recVendorBIll.getSublistValue({
             fieldId: 'item', 
