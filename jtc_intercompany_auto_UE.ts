@@ -29,10 +29,14 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
 
 
             const contaBanco = curr.getValue("custbody_jtc_cont_banc_inter")
-            const valorPage = curr.getValue("total")
+            let valorPage = curr.getValue("total")
             const subPayment = curr.getValue("subsidiary")
             const entity = curr.getValue("customer")
-
+            log.debug("teste", !!valorPage)
+            if (!valorPage) {
+                log.debug("valorPage", valorPage)
+                valorPage = curr.getValue("payment")
+            }
 
             const accountMain = curr.getValue("account")
 

@@ -46,12 +46,24 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
              const disponivel = inventoryitemSearchObj[0].getValue("locationquantityavailable")
 
              console.log("inventory", disponivel)
+            if (!!disponivel) {
+
+                if (Number(disponivel) > 0) {
+                    curr.setCurrentSublistValue({
+                        sublistId: ctx.sublistId,
+                        fieldId: 'custcol_jtc_qtat_able',
+                        value: disponivel
+                    })
+                } else {
+                    alert("Você não quantidade disponível para esse item!")
+                    curr.cancelLine({sublistId: ctx.sublistId})
+                }
+            } else {
+                alert("Você não quantidade disponível para esse item!")
+                curr.cancelLine({sublistId: ctx.sublistId})
+            }
             
-            curr.setCurrentSublistValue({
-                sublistId: ctx.sublistId,
-                fieldId: 'custcol_jtc_qtat_able',
-                value: disponivel
-            })
+            
 
 
         }
