@@ -8,16 +8,22 @@ import { EntryPoints } from 'N/types'
 import * as log from 'N/log'
 import {SublistType, FieldType, Form, FieldDisplayType} from 'N/ui/serverWidget'
 import * as search from 'N/search'
-
+import * as url from 'N/url'
 
 export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.UserEvent.beforeLoadContext) => {
     try {
 
         if (ctx.type == ctx.UserEventType.VIEW ) {
-            const client = ctx.newRecord.getValue("entity")
+            const client: any = ctx.newRecord.getValue("entity")
+            const date = String(ctx.newRecord.getValue("trandate"))
+            log.debug("date", date)
+
             log.debug("cliente", client)
             const form = ctx.form
             const sublist = createSublist(form)
+
+            const lastSaleOrd = createFieldForUltimosPedidos(form, client, date)
+
 
             const transactionSearchObj = search.create({
                 type: search.Type.INVOICE,
@@ -321,4 +327,68 @@ const createSublist = (form: Form) => {
     } catch (error) {
         
     }
+}
+
+const createFieldForUltimosPedidos = (form: Form, client: string | number, date: string) => {
+    try {
+        const forDate = formatarData(date)
+
+
+        const searchLastSaleOrd = search.create({
+            type: search.Type.SALES_ORDER,
+            filters: [
+                ['name', search.Operator.ANYOF, client],
+                "AND",
+                ['mainline', search.Operator.IS, "T"],
+                "AND",
+                ['trandate', search.Operator.BEFORE, forDate]
+            ],
+            columns: [
+                search.createColumn({name: 'trandate', sort: search.Sort.DESC}),
+                search.createColumn({name: 'tranid'})
+            ]
+        }).run().getRange({start: 0, end: 1})
+
+        log.debug("searchLasSaledOd", searchLastSaleOrd)
+
+        const field = form.addField({
+            id: 'custpage_last_pedido',
+            label: 'Último Pedido',
+            type: FieldType.URL
+            // container: 'main'
+        })
+
+
+        if (searchLastSaleOrd.length > 0) {
+            field.linkText = `Pedido de Vendas #${searchLastSaleOrd[0].getValue({name: 'tranid'})}`
+
+            const link = url.resolveRecord({
+                recordId: searchLastSaleOrd[0].id,
+                recordType: 'salesorder'
+            })
+            field.defaultValue = `https://7414781.app.netsuite.com${link}`
+        }
+
+        
+
+        
+    } catch (error) {
+        log.error("jtc_pag_histo_cliente_UE.createSublistForUltimosPedidos", error)
+    }
+}
+
+const formatarData = (dataStr: string) => {
+    // Criar um objeto Date a partir da string de data
+    const dataObj = new Date(dataStr)
+  
+    // Obter os componentes da data (dia, mês, ano)
+    const dia = ('0' + dataObj.getDate()).slice(-2)
+    const mes = ('0' + (dataObj.getMonth() + 1)).slice(-2) // Mês é baseado em zero
+    const ano = dataObj.getFullYear()
+  
+    // Formatar a data no estilo desejado (DD/MM/AAAA)
+    const dataFormatada = `${dia}/${mes}/${ano}`
+  
+    return dataFormatada
+
 }

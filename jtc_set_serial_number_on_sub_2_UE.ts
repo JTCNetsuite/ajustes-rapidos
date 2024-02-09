@@ -58,7 +58,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                                 "AND",
                                 [CTS.INVENTORY_NUMBER.NUMBER_SERIAL, search.Operator.ISNOT, "JR"],
                                 "AND", 
-                                ["expirationdate","after","01/10/2023"]
+                                ["expirationdate","after","09/02/2024"]
                             ],
                             columns: [
                                 search.createColumn({name: CTS.INVENTORY_NUMBER.NUMBER_SERIAL}),
