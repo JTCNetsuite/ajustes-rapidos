@@ -3,62 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
-    <style>
-        
-        /* * { */
-            /* margin: 0; */
-            /* padding: 0; */
-        /* } */
-        /* svg { */
-            /* padding: 0px; */
-            /* margin: 0px; */
-            /* border: 1px solid black; */
-        /* } */
-        
-    </style>
+    <title>ITF-14 Barcode</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
-
-
     <svg id="barcode"></svg>
-    <!-- <svg id="barcode2"></svg> -->
-    <!-- <svg id="barcode3"></svg> -->
-    <!-- <svg id="barcode4"></svg> -->
-    <!-- <svg id="barcode5"></svg> -->
-    <!-- <svg id="barcode6"></svg> -->
-
-  
 
     <script>
-        console.profile()
-        // 00190000090220286400100019719178195620000211761
-        JsBarcode("#barcode", "00019195779422028", {
-            format: "ITF14"
-        });
-        JsBarcode("#barcode2", "0286400100019", {
-            format: "ITF14",
-        });
-        JsBarcode("#barcode3", "7191781956200", {
-            format: "ITF14",
-        });
-        JsBarcode("#barcode4", "0021176100000", {
-            format: "ITF14",
-        });
-        // JsBarcode("#barcode5", "95840000", {
-        //     format: "itf-14",
-        //     width: 4,
-        //     height: 10,
-        //     displayValue: true
-        // });
-        // JsBarcode("#barcode6", "168750", {
-        //     format: "itf-14",
-        //     width: 4,
-        //     height: 10,
-        //     displayValue: true
-        // });
+        // Código de barras
+        const codigoBarras = "00196967300000704140000002202864000004061217";
+
+        // Configurações do código de barras ITF-14
+        const options = {
+            format: "ITF",
+            width: 2,
+            height: 100,
+            displayValue: true,
+            fontOptions: "bold",
+        };
+
+        // Gera o código de barras e exibe na página
+        JsBarcode("#barcode", codigoBarras, options);
     </script>
 </body>
 </html>
