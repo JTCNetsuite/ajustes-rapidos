@@ -61,17 +61,17 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
                     value: resulst_ultimo[0].getValue({name: 'amount'})
                 })
 
-                const a =  resulst_ultimo[0].getValue({name: 'trandate'})
+                const ultimo_dt =  String(resulst_ultimo[0].getValue({name: 'trandate'})).split("/")
                 curr.setValue({
                     fieldId: 'custentity_dt_ultimo_pedido',
-                    value: new Date()
+                    value: new Date(`${ultimo_dt[1]}/${ultimo_dt[0]}/${ultimo_dt[2]}`)
                 })
 
                 log.debug("Primeiro Pedido", resulst_ultimo[resulst_ultimo.length - 1])
-
+                const prim = String(resulst_ultimo[resulst_ultimo.length - 1].getValue({name: 'trandate'})).split("/")
                 curr.setValue({
                     fieldId: 'custentity_dt_prim_pedido',
-                    value: new Date(resulst_ultimo[resulst_ultimo.length - 1].getValue({name: 'trandate'}))
+                    value: new Date(`${prim[0]}/${prim[1]}/${prim[2]}`)
                 })
 
 
@@ -85,13 +85,14 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
                     fieldId: 'custentity_vl_liquido_maior_pedido',
                     value: pedido_com_valor_maior[0].getValue({name: 'amount'})
                 })
+                const maior_dt = String(pedido_com_valor_maior[0].getValue({name: 'trandate'})).split("/")
                 curr.setValue({
                     fieldId: 'custentity_dt_maior_pedido',
-                    value:  new Date(pedido_com_valor_maior[0].getValue({name: 'trandate'}))
+                    value:  new Date(`${maior_dt[1]}/${maior_dt[0]}/${maior_dt[2]}`)
                 })
             }
            
-            curr.save()
+            curr.save({ignoreMandatoryFields: true})
 
         }
 
