@@ -8,7 +8,7 @@ import { EntryPoints } from "N/types"
 import * as log from 'N/log'
 import * as search from "N/search"
 import * as runtime from 'N/runtime'
-import {FieldDisplayType} from 'N/ui/serverWidget'
+import {FieldDisplayType, FieldType} from 'N/ui/serverWidget'
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
 
@@ -59,6 +59,7 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
 
 
     }
+    
 
 
     // log.debug("fiedl", field)

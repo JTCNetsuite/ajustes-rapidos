@@ -8,6 +8,7 @@
 import { EntryPoints } from 'N/types'
 import * as log from 'N/log'
 import * as runtime from 'N/runtime'
+import {FieldType} from 'N/ui/serverWidget'
 
 export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.UserEvent.beforeLoadContext) => {
     try {
@@ -22,7 +23,6 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
                 id: "reject"
             })
         }
-
 
 
     } catch (error) {
