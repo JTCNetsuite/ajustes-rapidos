@@ -198,6 +198,24 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
             }
         }
 
+        if (ctx.fieldId == 'quantity' && ctx.sublistId == 'item') {
+            const dis = Number(curr.getCurrentSublistValue({
+                fieldId: 'custcol_jtc_qtat_able',
+                sublistId: 'item'
+            }))
+            const qtade = Number(curr.getCurrentSublistValue({
+                fieldId: 'quantity',
+                sublistId: 'item'
+            }))
+            if (dis < qtade) {
+                curr.setCurrentSublistValue({
+                    fieldId: 'quantity',
+                    sublistId: 'item',
+                    value: 0
+                })
+                alert("Maior que a quantidade disponível")
+            }
+        }
 
 
     } catch (error) {
