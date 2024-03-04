@@ -8,7 +8,7 @@ import { EntryPoints } from 'N/types'
 import * as log from 'N/log'
 import * as email from "N/email"
 import * as search from 'N/search'
-
+import * as record from 'N/record'
 
 
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
@@ -16,7 +16,7 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
         
         const curr = ctx.newRecord
         if (ctx.type == ctx.UserEventType.CREATE) {
-            const idSalesOrd = curr.getValue("createdfrom")
+            const idSalesOrd: any = curr.getValue("createdfrom")
             const nome_cliente = curr.getText("entity")
 
             log.debug("type", curr.type)
@@ -81,6 +81,7 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
                 }
            
             }
+
         }
         
 
@@ -93,3 +94,21 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
     }
 }
 
+export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.UserEvent.afterSubmitContext) => {
+    try {
+        const idSalesOrd: any = ctx.newRecord.getValue("createdfrom")
+        const u  = record.submitFields({
+            id: idSalesOrd,
+            type: record.Type.SALES_ORDER,
+            values: {
+                custbody_jtc_integr_itemfulfillment: ctx.newRecord.id
+            },
+            options: {
+                ignoreMandatoryFields: true
+            }
+        })
+        log.audit("u", u)
+    } catch (error) {
+        log.error("error", error)
+    }
+}
