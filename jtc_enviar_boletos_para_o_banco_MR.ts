@@ -16,7 +16,8 @@ export const getInputData: EntryPoints.MapReduce.getInputData = () => {
 
     // Define a hora para 23:59:59
     // var ate = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23, 59, 59);
-    const date = obterDataFormatada()
+    const date = dataAnterior()
+    log.debug("date", date)
 
     return search.create({
         type: 'customrecord_dk_cnab_aux_parcela',
@@ -44,11 +45,22 @@ export const map: EntryPoints.MapReduce.map = (ctx: EntryPoints.MapReduce.mapCon
 
 }
 
-const obterDataFormatada = () =>{
-    const data = new Date();
-    const dia = (data.getDate() < 10 ? '0' : '') + data.getDate();
-    const mes = ((data.getMonth() + 1) < 10 ? '0' : '') + (data.getMonth() + 1); // Os meses são base 0, então adicionamos 1.
-    const ano = data.getFullYear();
-  
-    return `${dia}/${mes}/${ano}`;
+const  dataAnterior = () => {
+    var hoje = new Date(); // Obtém a data atual
+    var diaAnterior = hoje
+    diaAnterior.setDate(hoje.getDate() - 1); // Obtém o dia anterior
+
+    var dia: number | string = diaAnterior.getDate();
+    var mes: number | string = diaAnterior.getMonth() + 1; // Os meses começam do zero, então adicionamos 1
+    var ano = diaAnterior.getFullYear();
+
+    // Formata o dia e o mês para terem dois dígitos
+    if (dia < 10) {
+        dia = '0' + dia;
+    }
+    if (mes < 10) {
+        mes = '0' + mes;
+    }
+
+    return dia + '/' + mes + '/' + ano; // Retorna a data no formato dd/mm/yyyy
 }
