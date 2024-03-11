@@ -310,7 +310,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 //     details: ' tipo do retorno do banco:  ' + typeof body + ' --> código do banco:  ' + code + ' --> id do registro: ' + idRec
                 // })
                 // if (pedidoenviado == "F" || pedidoenviado == true) {
-                //     const codeBank = code + ' - REQUISIÇÃO INVÁLIDA: BOLETO JÁ CRIADO OU DADOS INCORRETOS'
+                    const codeBank = code + ' - REQUISIÇÃO INVÁLIDA: BOLETO JÁ CRIADO OU DADOS INCORRETOS'
                 //     const senderId = -5
                 //         const bodyJSON = JSON.parse(body)
                 //         const erros = bodyJSON.erros
@@ -330,7 +330,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 //             body: mensagem
                 //         })
 
-                //         setBankSlipError(idRec, codeBank)
+                        setBankSlipError(idRec, codeBank)
                 // }
                 
 
@@ -381,13 +381,13 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                     details: ' campos do retorno do banco JSON:   ' + mensagem + '  --> tipo de dados:  ' + typeof mensagem
                 })
 
-                email.send({
+                // email.send({
 
-                    author: senderId,
-                    recipients: emails,
-                    subject: subject,
-                    body: mensagem
-                })
+                //     author: senderId,
+                //     recipients: emails,
+                //     subject: subject,
+                //     body: mensagem
+                // })
                 setBankSlipError(idRec, codeBank)
 
             } catch (error) {

@@ -10,7 +10,7 @@ import * as log from 'N/log'
 import * as search from 'N/search'
 
 
-export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.UserEvent.afterSubmitContext) => {
+export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
     try {
 
         if (ctx.type == ctx.UserEventType.CREATE) {
@@ -50,7 +50,7 @@ export const afterSubmit: EntryPoints.UserEvent.afterSubmit = (ctx: EntryPoints.
                     }))
 
                     let desconto = Math.floor(amount * percent)
-                    
+                    log.debug("desconto", desconto)
                     curr.setSublistValue({
                         fieldId: 'custcol_enl_discamount',
                         sublistId: 'item',
