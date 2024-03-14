@@ -14,10 +14,10 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
         
         if (ctx.type == ctx.UserEventType.CREATE || ctx.type == ctx.UserEventType.COPY) {
             const curr = ctx.newRecord
-            const sub = curr.getValue("subsidiary")
+            // const sub = curr.getValue("subsidiary")
             // if (sub != 7) {
-            curr.setValue({fieldId: 'orderstatus', value: 'B'})
-            curr.setValue({fieldId: 'custbody_jtc_status_pedido_venda', value: 1})
+            curr.setValue({fieldId: 'orderstatus', value: '_cancelled'})
+            // curr.setValue({fieldId: 'custbody_jtc_status_pedido_venda', value: 1})
             // }
             
 
