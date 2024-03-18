@@ -129,7 +129,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
             }
             else if (response.code == 400) {
 
-                bankSlipRejected(response.body, response.code, idRec, boletoBody.numeroTituloBeneficiario)
+                bankSlipRejected(response.body, response.code, idRec, boletoBody.numeroTituloBeneficiario, JSON.parse(response.body).erros[0].mensagem)
                 bankSlipHTML(idRec) //* criar html do boleto --> MUDAR DE FUNÇÃO NO FIM DO PROCESSO.
                 //* bankSlipXML(idRec)  //* criar xml do boleto --> MUDAR DE FUNÇÃO NO FIM DO PROCESSO.
                 //* emailBankSlip(id)
@@ -296,7 +296,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
 
         }   //* Fim da function bankSlipCreated()
 
-        function bankSlipRejected(body, code, idRec, nf_num) {
+        function bankSlipRejected(body, code, idRec, nf_num, msg) {
             // ** arrumar mais pra frente
             try {
                 // const parcelaCanb = record.load({
@@ -310,7 +310,7 @@ define(['N/email', 'N/format', 'N/file', 'N/https', 'N/log', 'N/record', 'N/rend
                 //     details: ' tipo do retorno do banco:  ' + typeof body + ' --> código do banco:  ' + code + ' --> id do registro: ' + idRec
                 // })
                 // if (pedidoenviado == "F" || pedidoenviado == true) {
-                    const codeBank = code + ' - REQUISIÇÃO INVÁLIDA: BOLETO JÁ CRIADO OU DADOS INCORRETOS'
+                    const codeBank = code+' ' + msg
                 //     const senderId = -5
                 //         const bodyJSON = JSON.parse(body)
                 //         const erros = bodyJSON.erros
