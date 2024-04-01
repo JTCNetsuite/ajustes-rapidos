@@ -26,44 +26,44 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
 
         }
         // ** Ultimo Pedido 
-        if (ctx.type ==  ctx.UserEventType.VIEW) {
-                    const date = String(ctx.newRecord.getValue("trandate"))
+        // if (ctx.type ==  ctx.UserEventType.VIEW) {
+        //             const date = String(ctx.newRecord.getValue("trandate"))
             
-                    const forDate = formatarData(date)
-                    const client = ctx.newRecord.getValue("entity")
+        //             const forDate = formatarData(date)
+        //             const client = ctx.newRecord.getValue("entity")
             
             
-                    const searchLastSaleOrd = search.create({
-                        type: search.Type.SALES_ORDER,
-                        filters: [
-                            ['name', search.Operator.ANYOF, client],
-                            "AND",
-                            ['mainline', search.Operator.IS, "T"],
-                            "AND",
-                            ['trandate', search.Operator.BEFORE, forDate]
-                        ],
-                        columns: [
-                            search.createColumn({name: 'trandate', sort: search.Sort.DESC}),
-                            search.createColumn({name: 'tranid'})
-                        ]
-                    }).run().getRange({start: 0, end: 1})
+        //             const searchLastSaleOrd = search.create({
+        //                 type: search.Type.SALES_ORDER,
+        //                 filters: [
+        //                     ['name', search.Operator.ANYOF, client],
+        //                     "AND",
+        //                     ['mainline', search.Operator.IS, "T"],
+        //                     "AND",
+        //                     ['trandate', search.Operator.BEFORE, forDate]
+        //                 ],
+        //                 columns: [
+        //                     search.createColumn({name: 'trandate', sort: search.Sort.DESC}),
+        //                     search.createColumn({name: 'tranid'})
+        //                 ]
+        //             }).run().getRange({start: 0, end: 1})
             
-                    log.debug("searchLasSaledOd", searchLastSaleOrd)
+        //             log.debug("searchLasSaledOd", searchLastSaleOrd)
             
-                    if (searchLastSaleOrd.length > 0) {
+        //             if (searchLastSaleOrd.length > 0) {
             
-                        const link = url.resolveRecord({
-                            recordId: searchLastSaleOrd[0].id,
-                            recordType: 'salesorder'
-                        })
-                        ctx.form.addPageLink({
-                            type : FormPageLinkType.CROSSLINK,
-                            title : 'Último Pedido',
-                            url : `https://7414781.app.netsuite.com${link}`
-                        })
-                    }
+        //                 const link = url.resolveRecord({
+        //                     recordId: searchLastSaleOrd[0].id,
+        //                     recordType: 'salesorder'
+        //                 })
+        //                 ctx.form.addPageLink({
+        //                     type : FormPageLinkType.CROSSLINK,
+        //                     title : 'Último Pedido',
+        //                     url : `https://7414781.app.netsuite.com${link}`
+        //                 })
+        //             }
             
-        }
+        // }
 
         if (ctx.type == ctx.UserEventType.VIEW) {
             const client: any = ctx.newRecord.getValue("entity")

@@ -64,9 +64,6 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
 
 
     }
-    
-
-
     // log.debug("fiedl", field)
 
 }   
