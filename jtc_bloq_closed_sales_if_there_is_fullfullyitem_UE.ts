@@ -17,36 +17,36 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
     if (ctx.type == ctx.UserEventType.VIEW) {
         const curr = ctx.newRecord
    
-        const searchAtendimento = search.create({
-            type: search.Type.ITEM_FULFILLMENT,
-            filters: [
-                ['mainline', search.Operator.IS, "T"],
-                    "AND",
-                ['createdfrom', search.Operator.ANYOF, curr.id]
-            ]
-        }).runPaged().count
+        // const searchAtendimento = search.create({
+        //     type: search.Type.ITEM_FULFILLMENT,
+        //     filters: [
+        //         ['mainline', search.Operator.IS, "T"],
+        //             "AND",
+        //         ['createdfrom', search.Operator.ANYOF, curr.id]
+        //     ]
+        // }).runPaged().count
 
-        const searchInvouice = search.create({
-            type: search.Type.INVOICE,
-            filters: [
-                ['mainline', search.Operator.IS, "T"],
-                    "AND",
-                ['createdfrom', search.Operator.ANYOF, curr.id]
-            ]
-        }).runPaged().count
+        // const searchInvouice = search.create({
+        //     type: search.Type.INVOICE,
+        //     filters: [
+        //         ['mainline', search.Operator.IS, "T"],
+        //             "AND",
+        //         ['createdfrom', search.Operator.ANYOF, curr.id]
+        //     ]
+        // }).runPaged().count
     
-        log.debug("searchAtenfimento", searchAtendimento)
-        log.debug("searchInvouice", searchInvouice)
+        // log.debug("searchAtenfimento", searchAtendimento)
+        // log.debug("searchInvouice", searchInvouice)
     
         const status_inte = curr.getValue("custbody_jtc_integration_status")
           
         const currUser = runtime.getCurrentUser().role
         
-        if (searchAtendimento > 0 || searchInvouice > 0) {
+        // if (searchAtendimento > 0 || searchInvouice > 0) {
             if (currUser != 3) {
                 ctx.form.removeButton({id: 'closeremaining'})
             }
-        }
+        // }
         
     }
     
