@@ -73,7 +73,7 @@ define(['N/record', 'N/search', 'N/log'],
                         const orgaoNegativador = 0  //*Discutir com a JTC, política de descontos. Administrado pelo BB?
                         const indicadorAceiteTituloVencido = 'S' //*Discutir com a JTC, política de atraso, valores. Administrado pelo BB?
                         const numeroDiasLimiteRecebimento = 0  //*Discutir com a JTC, política de recebimento. Administrado pelo BB?
-                        const codigoAceite = 'S' //* Cliente reconhece a dívida? Boleto seguirá junto com nota fiscal
+                        const codigoAceite = 'N' //* Cliente reconhece a dívida? Boleto seguirá junto com nota fiscal
                         const codigoTipoTitulo = 2
                         const descricaoTipoTitulo = 'DM' //*Manter como DM - duplicata mercantil?
                         const indicadorPermissaoRecebimentoParcial = 'N' //*Manter como recebimento total da fatura? Discutir com a JTC?
