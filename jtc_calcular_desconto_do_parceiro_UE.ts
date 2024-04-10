@@ -13,8 +13,8 @@ import * as search from 'N/search'
 export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoints.UserEvent.beforeSubmitContext) => {
     try {
 
+        const curr = ctx.newRecord
         if (ctx.type == ctx.UserEventType.CREATE) {
-            const curr = ctx.newRecord
 
             const vTotal = Number(curr.getValue('total'))
 
@@ -60,6 +60,25 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
                 }
 
             }
+
+        }
+
+        if (ctx.type == ctx.UserEventType.CREATE || ctx.type == ctx.UserEventType.EDIT ) {
+            const lines = curr.getLineCount({sublistId: 'item'})
+
+            let profit_margin_total = 0
+
+            for (var i=0; i < lines; i++) {
+                const profit_margin = String(curr.getSublistValue({
+                    fieldId: 'custcol_jtc_profit_margin',
+                    sublistId: 'item',
+                    line: i
+                }))
+                profit_margin_total += Number(profit_margin.split("%")[0])
+            }
+
+
+            curr.setValue({fieldId: 'custbody_jtc_total_profit_margin', value: profit_margin_total})
 
         }
         
