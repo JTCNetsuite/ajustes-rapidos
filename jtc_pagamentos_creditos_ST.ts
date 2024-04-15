@@ -99,6 +99,14 @@ const formPost = (form: UI.Form, ctx: EntryPoints.Suitelet.onRequestContext) => 
                     value: String(tranid)
                 })
             }
+            const terms = values.getText({name: 'terms'})
+            if (!!terms) {
+                sublist.setSublistValue({
+                    id: 'custpage_terms',
+                    line: i,
+                    value: terms
+                })
+            }
 
             const type = values.getText({name: 'type'})
             if (!!type) {
@@ -258,7 +266,12 @@ const createSublist = (form: UI.Form) => {
             id: 'custpage_cliente',
             label: 'CLIENTE',
             type: UI.FieldType.TEXT
-        }) 
+        })
+        sublist.addField({
+            id: 'custpage_terms',
+            label: 'Forma de Pagamento',
+            type: UI.FieldType.TEXT
+        })
         sublist.addField({
             id: 'custpage_nf',
             label: 'NOTA FISCAL',
