@@ -16,13 +16,18 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
         if (ctx.fieldId == 'entity') {
             const client = curr.getValue("entity")
             
-            const uf = lookupFields({
+            const customer_data = lookupFields({
                 id: client,
                 type: Type.CUSTOMER,
                 columns: [
-                    'Address.custrecord_enl_uf'
+                    'Address.custrecord_enl_uf',
+                    "subsidiary","pricelevel"
                 ]
-            })['Address.custrecord_enl_uf'][0].text
+            })
+
+            const uf = customer_data['Address.custrecord_enl_uf'][0].text
+
+
             console.log(uf, 'VERIFICAR')
             if (uf != 'MG') {
                 console.log("diferente de minas e são paulo")
@@ -33,6 +38,8 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
                 console.log("cidade sp")
                 curr.setValue({fieldId: 'subsidiary', value: 3})
             }
+            curr.setValue({fieldId: 'custbody_jtc_uf_for_price', value: uf})
+            curr.setValue({fieldId: 'custbody_jtc_price_cliente', value: customer_data.pricelevel[0].value})
         }   
 
 

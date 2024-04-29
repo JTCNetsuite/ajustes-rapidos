@@ -18,30 +18,35 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
         // console.log("ctx field", ctx.fieldId)
         if (ctx.fieldId == 'item' && ctx.sublistId == 'item') {
             const clientID = curr.getValue("entity")
-            
+           
+
+
             const currentItem = curr.getCurrentSublistValue({
                 fieldId: 'item',
                 sublistId: 'item'
             })
 
             if (!!currentItem) {
-                const clientData = search.lookupFields({
-                    id: clientID,
-                    type: search.Type.CUSTOMER,
-                    columns: [
-                        "subsidiary","pricelevel",
-                        "Address.custrecord_enl_uf"
-                    ]
-                })
+                // const clientData = search.lookupFields({
+                //     id: clientID,
+                //     type: search.Type.CUSTOMER,
+                //     columns: [
+                //         "subsidiary","pricelevel",
+                //         "Address.custrecord_enl_uf"
+                //     ]
+                // })
     
-                const subClient = clientData.subsidiary[0].value
-                const priceClient = clientData.pricelevel[0].value
-                const ufClient = clientData['Address.custrecord_enl_uf'][0].text
-                const priceText = clientData.pricelevel[0].text
+                // const subClient = clientData.subsidiary[0].value
+                const subClient = curr.getValue("custbody_jtc_sub_cliente")
+                // const priceClient = clientData.pricelevel[0].value
+                const priceClient = curr.getValue("custbody_jtc_price_cliente")
+                // const ufClient = clientData['Address.custrecord_enl_uf'][0].text
+                const ufClient = curr.getValue("custbody_jtc_uf_for_price")
+                // const priceText = clientData.pricelevel[0].text
                 
                 // ** field custcoljtc_preco_tabela
     
-                console.log("clienteData", clientData)
+                // console.log("clienteData", clientData)
                 console.log("uf", ufClient)
                 const sub = curr.getValue("subsidiary")
     
@@ -52,7 +57,7 @@ export const postSourcing: EntryPoints.Client.postSourcing = (ctx:EntryPoints.Cl
                 if (sub != subClient) {
                    
                     // ** PEDIDO FORA DE SÃO PAULO(SP) OU EXTREMA(MG) PARA QUALQUER OUTRO ESTADO QUE SEJA DIFERENTE DE SP/MG
-                    if ((sub == 7 || sub == 3) && (ufClient != 'SP' || ufClient != 'MG')) {
+                    if ((sub == 7 || sub == 3) && (ufClient != 'SP' && ufClient != 'MG')) {
                         price = priceClient
                        
                     }
