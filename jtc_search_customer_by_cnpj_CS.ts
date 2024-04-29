@@ -1,3 +1,7 @@
+/**
+ * @NApiVersion         2.x
+ * @NScriptType         ClientScript
+ */
 
 
 
@@ -21,8 +25,10 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
 
             if (clientQuery.length == 0) {
                 alert("Esse CNPJ não existe")
+                
+            } else {
                 if (clientQuery.length > 1) {
-                    alert("Esse CNPJ tem mais de dois clientes separados")
+                    alert("Esse CNPJ tem mais de dois clientes cadastrado")
                     curr.setValue({
                         fieldId: 'custbody_jtc_cnpjcpf_pedido',
                         value: '',

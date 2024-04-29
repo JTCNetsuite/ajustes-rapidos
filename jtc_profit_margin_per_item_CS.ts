@@ -65,7 +65,7 @@ export const validateLine: EntryPoints.Client.validateLine = (ctx:EntryPoints.Cl
         
         if (ctx.sublistId == 'item') {
             console.log("sublist ITEM -----------------------")
-            const currLine = curr.getCurrentSublistIndex
+            const currLine = Number(curr.getCurrentSublistIndex)
 
             const currentProfit = Number(curr.getValue("custbody_jtc_total_profit_margin"))
 
@@ -74,7 +74,7 @@ export const validateLine: EntryPoints.Client.validateLine = (ctx:EntryPoints.Cl
                 sublistId: 'item'
             }))
 
-            curr.setValue({fieldId: 'custbody_jtc_total_profit_margin', value: (currentProfit + profit_margin).toFixed(2)})
+            curr.setValue({fieldId: 'custbody_jtc_total_profit_margin', value: ((currentProfit + profit_margin)/currLine).toFixed(2)})
             
             return true
         }
