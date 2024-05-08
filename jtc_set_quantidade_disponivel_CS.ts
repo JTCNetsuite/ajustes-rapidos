@@ -8,7 +8,7 @@
 
 import { EntryPoints } from 'N/types'
 import * as search from 'N/search'
-
+import * as runtime from 'N/runtime'
 
 
 export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.Client.fieldChangedContext) => {
@@ -67,10 +67,44 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
 
 
         }
+        const currUser = runtime.getCurrentUser().role
+        if (ctx.fieldId == 'custbodyjtc_com_ped' && currUser == 1454) {
+            const currComissao = curr.getValue("custbodyjtc_com_ped")
+            const parter = curr.getValue('partner')
+            const comissao = search.lookupFields({
+                id: parter,
+                type: search.Type.PARTNER,
+                columns: ['custentity3']
+            }).custentity3
 
+            if (!!comissao) {
+                const numcomissao = Number(String(comissao).split('%')[0].replace(',', '.'))
+                const numCurrentComissao = Number(String(currComissao).split('%')[0].replace(',', '.'))
+                if (numCurrentComissao > numcomissao) {
+                    alert("Comissão é maior que 3%")
+                    curr.setValue({fieldId: 'custbodyjtc_com_ped', value: numcomissao})
+                }
+            }
+        }
+
+        if (ctx.fieldId == 'custbody_jtc_tipo_frete' && currUser == 1454) {
+            const tipo_custom = curr.getValue("custbody_jtc_tipo_frete")
+
+            curr.setValue({fieldId: 'custbody_enl_freighttype', value: tipo_custom})
+        }
 
 
     } catch (error) {
         console.log("Erro", error)
     }
+}
+export const saveRecord: EntryPoints.Client.saveRecord = (ctx: EntryPoints.Client.saveRecordContext) => {
+    const curr = ctx.currentRecord
+
+    const atrado = Number(curr.getValue('custbody_jtc_total_em_atraso'))
+    
+    if (!!atrado) {
+        alert("Cliente com atraso")
+    }
+    return true
 }
