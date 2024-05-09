@@ -62,17 +62,38 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
                 })
 
                 const ultimo_dt =  String(resulst_ultimo[0].getValue({name: 'trandate'})).split("/")
-                curr.setValue({
-                    fieldId: 'custentity_dt_ultimo_pedido',
-                    value: new Date(`${ultimo_dt[1]}/${ultimo_dt[0]}/${ultimo_dt[2]}`)
-                })
+                if (ultimo_dt[0] > 12) {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_ultimo_pedido',
+                        value: new Date(`${ultimo_dt[1]}/${ultimo_dt[0]}/${ultimo_dt[2]}`)
+                    })
+                } else {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_ultimo_pedido',
+                        value: new Date(`${ultimo_dt[0]}/${ultimo_dt[1]}/${ultimo_dt[2]}`)
+                    })
+                }
+               
 
                 log.debug("Primeiro Pedido", resulst_ultimo[resulst_ultimo.length - 1])
                 const prim = String(resulst_ultimo[resulst_ultimo.length - 1].getValue({name: 'trandate'})).split("/")
-                curr.setValue({
-                    fieldId: 'custentity_dt_prim_pedido',
-                    value: new Date(`${prim[0]}/${prim[1]}/${prim[2]}`)
-                })
+                if (prim[0] > 12) {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_prim_pedido',
+                        value: new Date(`${prim[1]}/${prim[0]}/${prim[2]}`)
+                    })
+                } else {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_prim_pedido',
+                        value: new Date(`${prim[0]}/${prim[1]}/${prim[2]}`)
+                    })
+                }
+                // log.debug("prim", new Date(`${prim[0]}/${prim[1]}/${prim[2]}`))
+                // log.debug("prim2", new Date(`${prim[1]}/${prim[0]}/${prim[2]}`))
+                // curr.setValue({
+                //     fieldId: 'custentity_dt_prim_pedido',
+                //     value: new Date(`${prim[0]}/${prim[1]}/${prim[2]}`)
+                // })
 
 
             }
@@ -86,10 +107,18 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
                     value: pedido_com_valor_maior[0].getValue({name: 'amount'})
                 })
                 const maior_dt = String(pedido_com_valor_maior[0].getValue({name: 'trandate'})).split("/")
-                curr.setValue({
-                    fieldId: 'custentity_dt_maior_pedido',
-                    value:  new Date(`${maior_dt[1]}/${maior_dt[0]}/${maior_dt[2]}`)
-                })
+                if (maior_dt[0] > 12) {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_maior_pedido',
+                        value:  new Date(`${maior_dt[1]}/${maior_dt[0]}/${maior_dt[2]}`)
+                    })
+                } else {
+                    curr.setValue({
+                        fieldId: 'custentity_dt_maior_pedido',
+                        value:  new Date(`${maior_dt[0]}/${maior_dt[1]}/${maior_dt[2]}`)
+                    })
+                }
+               
             }
            
             curr.save({ignoreMandatoryFields: true})

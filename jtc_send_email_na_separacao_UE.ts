@@ -60,8 +60,8 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
                 try {
                     email.send({
                         author: 129,
-                        body: `Olá ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi SEPARADO, e já está pronto para expedição. Para mais informações, por favor entre em contato com nosso setor de vendas.`,
-                        subject: String(pedido_vendas) + " Foi separado",
+                        body: `Olá ${nome_cliente}! <br></br>Informamos que o seu pedido ${String(pedido_vendas)} da JTC Distribuidora está separado disponível para RETIRADA. Para mais informações, por favor entrar em contato com o setor de Vendas através do e-mail comercial@jtcd.com.br ou tel. fixo (11) 3315-9301 / (11) 96979-7227 (Whatsaap).`,
+                        subject: "JTC - Pedido separado disponível para RETIRADA",
                         recipients: recipients[0]
                     })
                     log.debug("emaial ", "enviado parceiro")
@@ -71,8 +71,8 @@ export const beforeSubmit: EntryPoints.UserEvent.beforeSubmit = (ctx: EntryPoint
                 try {
                     email.send({
                         author: 129,
-                        body: `Olá ${nome_cliente}! <br></br>Informamos que o seu pedido da JTC Distribuidora foi SEPARADO, e já está pronto para expedição. Para mais informações, por favor entre em contato com nosso setor de vendas.`,
-                        subject: String(pedido_vendas) + " Foi separado",
+                        body: `Olá ${nome_cliente}! <br></br>Informamos que o seu pedido ${String(pedido_vendas)} da JTC Distribuidora está separado disponível para RETIRADA. Para mais informações, por favor entrar em contato com o setor de Vendas através do e-mail comercial@jtcd.com.br ou tel. fixo (11) 3315-9301 / (11) 96979-7227 (Whatsaap).`,
+                        subject: "JTC - Pedido separado disponível para RETIRADA",
                         recipients: recipients[1]
                     })
                     log.debug("emaial ", "enviado Cliente")
