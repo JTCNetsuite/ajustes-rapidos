@@ -68,11 +68,16 @@ export const beforeLoad: EntryPoints.UserEvent.beforeLoad = (ctx: EntryPoints.Us
         if (ctx.type == ctx.UserEventType.VIEW) {
             const client: any = ctx.newRecord.getValue("entity")
             const date = String(ctx.newRecord.getValue("trandate"))
+            const clienteLn: any = ctx.newRecord.getValue("custbody1")
+            
             log.debug("date", date)
 
             log.debug("cliente", client)
             const form = ctx.form
+  
             const sublist = createSublist(form)
+
+            createCustomerLn(clienteLn, form)
 
             const lastSaleOrd = createFieldForUltimosPedidos(form, client, date)
 
@@ -444,3 +449,35 @@ const createFieldForUltimosPedidos = (form: Form, client: string | number, date:
     }
 }
 
+const createCustomerLn = (isLn: boolean, form: Form) => {
+    try {
+        
+        if (isLn) {
+            const lnHtml = form.addField({
+                id: 'custpage_ln_cliente',
+                label: '...',
+                type: 'INLINEHTML'
+            })
+
+            lnHtml.defaultValue = `<div id="ln_field_red" style="color:red; padding:10px; position:absolute;">CLIENTE COM OBSERVAÇÕES (LN)</div>
+                <script>
+                    var campo = document.getElementById('custbody1_fs_lbl');
+                    console.log("top", campo.offsetTop)
+                    console.log("left", campo.offsetLeft)
+                    var ln = document.getElementById('ln_field_red');
+                    
+                    ln.style.backgroundColor = 'white'
+
+                    ln.style.top =  "610px"
+                    ln.style.left = (campo.offsetTop + 20)+"px"
+                </script>
+            `
+
+
+        }
+
+
+    } catch (error) {
+        log.error("errer,", error)
+    }
+}
