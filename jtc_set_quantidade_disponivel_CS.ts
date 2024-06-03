@@ -14,8 +14,8 @@ import * as runtime from 'N/runtime'
 export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.Client.fieldChangedContext) => {
     try {
         const curr= ctx.currentRecord
-
-        if (ctx.fieldId == "item") {
+        const tp_operacao = curr.getValue("custbody_enl_operationtypeid")
+        if (ctx.fieldId == "item" && (tp_operacao == 31 || tp_operacao == 38) ) {
             const line = ctx.line
             console.log("line", line)
 
