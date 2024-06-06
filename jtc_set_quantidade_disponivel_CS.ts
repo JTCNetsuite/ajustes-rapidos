@@ -15,7 +15,7 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
     try {
         const curr= ctx.currentRecord
         const tp_operacao = curr.getValue("custbody_enl_operationtypeid")
-        if (ctx.fieldId == "item" && (tp_operacao == 31 || tp_operacao == 38 || tp_operacao == 47) ) {
+        if (ctx.fieldId == "item" ) {
             const line = ctx.line
             console.log("line", line)
 
@@ -46,7 +46,7 @@ export const fieldChanged: EntryPoints.Client.fieldChanged = (ctx: EntryPoints.C
              const disponivel = inventoryitemSearchObj[0].getValue("locationquantityavailable")
 
              console.log("inventory", disponivel)
-            if (!!disponivel) {
+            if (!!disponivel ) {
 
                 if (Number(disponivel) > 0) {
                     curr.setCurrentSublistValue({
